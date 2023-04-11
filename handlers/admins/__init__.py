@@ -1,4 +1,4 @@
-# from .news import dp
+from .news import dp
 from .stats import dp
 from .temp import dp
 

@@ -133,11 +133,11 @@ class BotDB:
                 result = await cursor.execute("SELECT `id` FROM `unibook` WHERE `user_id` = %s", (user_id,))
                 return result
 
-    async def add_login(user_id, login, password):
+    async def add_login(user_id, login, password, uni):
         async with pool.acquire() as conn:
             async with conn.cursor() as cursor:
-                await cursor.execute("INSERT INTO `unibook` (`user_id`, `login`, `password`) VALUES (%s, %s, %s)",
-                                     (user_id, login, password,))
+                await cursor.execute("INSERT INTO `unibook` (`user_id`, `login`, `password`, `uni`) VALUES (%s, %s, %s, %s)",
+                                     (user_id, login, password, uni,))
                 await conn.commit()
 
     async def remove_login(user_id):
@@ -149,11 +149,12 @@ class BotDB:
     async def get_login(user_id):
         async with pool.acquire() as conn:
             async with conn.cursor() as cursor:
-                await cursor.execute("SELECT `login`, `password` FROM `unibook` WHERE `user_id` = %s", (user_id,))
+                await cursor.execute("SELECT `login`, `password`, `uni`  FROM `unibook` WHERE `user_id` = %s", (user_id,))
                 logpass = await cursor.fetchall()
                 login = logpass[0][0]
                 password = logpass[0][1]
-                return login, password
+                uni = logpass[0][2]
+                return login, password, uni
 
     async def all_chats():
         async with pool.acquire() as conn:

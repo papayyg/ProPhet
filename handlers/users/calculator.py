@@ -10,6 +10,9 @@ from utils.misc.throttling import rate_limit
 @rate_limit(limit=1)
 @dp.message_handler(commands=['c'], commands_prefix="/!@")
 async def calculator(message: types.Message):
+    if len(message.text.split()) == 1:
+        await message.answer('Напишите выражение')
+        return
     original_string = message.text[message.text.find(' ') + 1:]
     modified_string = re.sub(r'\b([a-z])', r'math.\g<1>', original_string)
     try:

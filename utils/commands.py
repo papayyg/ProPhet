@@ -115,6 +115,10 @@ async def set_default_commands(dp):
             command='link',
             description='Сократить ссылку'
         ),
+        BotCommand(
+            command='ping',
+            description='Посмотреть состояние серверов'
+        ),
     ]
     commands_group = [
         BotCommand(

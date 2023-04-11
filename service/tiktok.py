@@ -1,13 +1,15 @@
 import asyncio
 import os
 import warnings
-
+import requests
+from playwright.async_api import async_playwright
 import aiohttp
 import moviepy.video.fx.all as vfx
 import psutil
 from bs4 import BeautifulSoup
 from moviepy.editor import AudioFileClip, VideoFileClip, concatenate_videoclips
 from PIL import Image
+import aiofiles
 
 
 def ignore_moviepy_warning(message, category, filename, lineno, file=None, line=None):
@@ -136,18 +138,39 @@ async def tiktok_del(path):
 
 
 async def download_video(link, path):
-    async with aiohttp.ClientSession() as session:
-        data = {
-            'id': link,
-            'locale': 'ru',
-            'tt': 'a0RGWTU5',
+    headers = {'referer': 'https://www.tiktok.com/'}
+    async with async_playwright() as p:
+        browser = await p.chromium.launch()
+        page = await browser.new_page()
+        await page.goto(link)
+        await page.wait_for_selector('video')
+        video = await page.query_selector('video')
+        video_url = await video.get_attribute('src')
+        cookies = await page.context.cookies()
+        tt_chain_token = None
+        for cookie in cookies:
+            if cookie['name'] == 'tt_chain_token':
+                tt_chain_token = cookie['value']
+                break
+        await browser.close()
+        cookies = {
+            'tt_chain_token': tt_chain_token,
         }
-        async with session.post('https://ssstik.io/abc', params=params, headers=headers, data=data) as response:
-            html = await response.text()
-            downloadSoup = BeautifulSoup(html, "html.parser")
-            downloadLink = downloadSoup.a["href"]
-            async with session.get(downloadLink) as downloadResponse:
-                content = await downloadResponse.read()
-                with open(f'temp/tiktok_video_{path}.mp4', "wb") as f:
-                    f.write(content)
+        response = await asyncio.to_thread(requests.get, video_url, cookies=cookies, headers=headers)
+        async with aiofiles.open(f'temp/tiktok_video_{path}.mp4', 'wb') as f:
+            await f.write(response.content)
+    # async with aiohttp.ClientSession() as session:
+    #     data = {
+    #         'id': link,
+    #         'locale': 'ru',
+    #         'tt': 'a0RGWTU5',
+    #     }
+    #     async with session.post('https://ssstik.io/abc', params=params, headers=headers, data=data) as response:
+    #         html = await response.text()
+    #         downloadSoup = BeautifulSoup(html, "html.parser")
+    #         downloadLink = downloadSoup.a["href"]
+    #         async with session.get(downloadLink) as downloadResponse:
+    #             content = await downloadResponse.read()
+    #             with open(f'temp/tiktok_video_{path}.mp4', "wb") as f:
+    #                 f.write(content)
 

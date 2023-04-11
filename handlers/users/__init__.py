@@ -17,7 +17,7 @@ from .start import dp
 from .stickers import dp
 from .tiktok import dp
 from .translator import dp
-from .unibook import dp
+from .uni import dp
 from .voice import dp
 from .weather import dp
 from .youtube import dp
