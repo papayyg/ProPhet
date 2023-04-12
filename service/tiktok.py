@@ -80,10 +80,8 @@ async def check_slide(link):
 
 async def adl(link, chat_type):
     async with aiohttp.ClientSession() as session:
-        async with session.get(f'https://tokurlshortener.com/api/shorten?url={link}') as response:
-            shortlink_json = await response.json()
-            shortlink = shortlink_json['shortlink']
         async with session.get(link) as response:
+            shortlink = link
             r = await response.text()
             Soup = BeautifulSoup(r, "html.parser")
             author = Soup.select_one('span.e17fzhrb1').text
@@ -92,11 +90,13 @@ async def adl(link, chat_type):
             descr = ''
             for i in Soup.find_all('span', {'class': 'efbd9f0'}):
                 descr += f'{i.text} '
-            if len(descr) > 870:
-                descr = descr[:870]
             descr.replace('<', '\\<')
             descr.replace('>', '\\>')
-        return author, descr.strip(), shortlink
+            descr_second = 0
+            if len(descr) > 870:
+                descr_second = descr[870:]
+                descr = descr[:870]
+        return author, descr.strip(), shortlink, descr_second
 
 
 async def download_photo_music(link, path):

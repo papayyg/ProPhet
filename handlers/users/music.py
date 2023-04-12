@@ -32,7 +32,7 @@ data = {
 
 @dp.message_handler(lambda message: message.text.lower() in ['ууу', 'гост', 'хоко', 'уэнсдей', 'густас'])
 async def send_music(message: types.Message):
-    audio = open(f'data/music/{data[message.text]["src"]}.mp3', 'rb')
+    audio = open(f'data/music/{data[message.text.lower()]["src"]}.mp3', 'rb')
     if message.reply_to_message:
         await bot.send_audio(message.chat.id, audio, title=data[message.text]["title"], performer=data[message.text]["performer"], reply_to_message_id=message.reply_to_message.message_id)
     else:
