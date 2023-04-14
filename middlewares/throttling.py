@@ -6,6 +6,8 @@ from aiogram.dispatcher.handler import CancelHandler, current_handler
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram.utils.exceptions import Throttled
 
+from locales.translations import _
+from utils.locales import locales_dict
 
 class ThrottlingMiddleware(BaseMiddleware):
     def __init__(self, limit=DEFAULT_RATE_LIMIT, key_prefix='antiflood_'):
@@ -41,7 +43,7 @@ class ThrottlingMiddleware(BaseMiddleware):
         delta = throttled.rate - throttled.delta
 
         if throttled.exceeded_count <= 2:
-            await message.reply('Не флудите!')
+            await message.reply(await _('Не флудите!', locales_dict[message.chat.id]))
 
         await asyncio.sleep(delta)
 

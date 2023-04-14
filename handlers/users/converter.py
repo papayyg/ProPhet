@@ -19,4 +19,4 @@ async def handler(message: types.Message):
             result = '{:,}'.format(int(str(result).split(".")[0])).replace(',', ' ')
         await message.answer(f'{result} {to_currency}')
     except Exception as ex:
-        await message.answer(f'⚠️ Ошибка: {ex}')
+        await message.answer(f'⚠️ Error: {ex}')

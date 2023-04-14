@@ -2,6 +2,9 @@ async def on_startup(dp):
     import middlewares
     middlewares.setup(dp)
 
+    from utils.locales import get_chats_locales
+    await get_chats_locales()
+
     from utils.commands import set_default_commands
     await set_default_commands(dp)
 

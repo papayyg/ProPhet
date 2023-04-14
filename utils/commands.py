@@ -4,218 +4,232 @@ from aiogram.types import (BotCommand, BotCommandScopeAllChatAdministrators,
 
 from data.config import owner_id
 
+from locales.translations import _
+from utils.locales import locales_dict
 
-async def set_default_commands(dp):
-    commands_private = [
+async def commands_private(lang):
+    commands_p = [
         BotCommand(
             command='start',
-            description='Начало работы'
+            description=await _('Начало работы', lang)
         ),
         BotCommand(
             command='help',
-            description='Узнать подробности возможностей бота'
+            description=await _('Узнать подробности возможностей бота', lang)
         ),
         BotCommand(
             command='auth',
-            description=' Сохранить данные в базе (Unibook)'
+            description=await  _('Сохранить данные в базе (Unibook, Empro)', lang)
         ),
         BotCommand(
             command='del',
-            description='Удалить данные из базы (Unibook)'
+            description=await _('Удалить данные из базы (Unibook, Empro)', lang)
         ),
         BotCommand(
             command='nb',
-            description='Посмотреть все свои НБ (Unibook)'
+            description=await _('Посмотреть все свои НБ (Unibook, Empro)', lang)
         ),
         BotCommand(
             command='journal',
-            description='Баллы по всем предметам (Unibook)'
+            description=await _('Баллы по всем предметам (Unibook, Empro)', lang)
         ),
         BotCommand(
             command='subjects',
-            description='Информация о всех предметах (Unibook)'
+            description=await _('Информация о всех предметах (Unibook)', lang)
         ),
         BotCommand(
             command='gpa',
-            description='Средний балл за все семестры  (Unibook)'
+            description=await _('Средний балл за все семестры  (Unibook)', lang)
         ),
         BotCommand(
             command='gpas',
-            description='Подробный средний балл (Unibook)'
+            description=await _('Подробный средний балл (Unibook)', lang)
         ),
         BotCommand(
             command='cinemaplus',
-            description='Кинопремьеры в CinemaPlus'
+            description=await _('Кинопремьеры в CinemaPlus', lang)
         ),
         BotCommand(
             command='parkcinema',
-            description='Кинопремьеры в ParkCinema'
+            description=await _('Кинопремьеры в ParkCinema', lang)
         ),
         BotCommand(
             command='weather',
-            description='Погода в указанном городе'
+            description=await _('Погода в указанном городе', lang)
         ),
         BotCommand(
             command='qbs',
-            description='Добавить фото/стикер/сообщение в набор чата'
+            description=await _('Добавить фото/стикер/сообщение в набор чата', lang)
         ),
         BotCommand(
             command='dbs',
-            description='Удалить стикер из набора'
+            description=await _('Удалить стикер из набора', lang)
         ),
         BotCommand(
             command='n',
-            description='Да или нет'
+            description=await _('Да или нет', lang)
         ),
         BotCommand(
             command='l',
-            description='Случайное число от * до *'
+            description=await _('Случайное число от * до *', lang)
         ),
         BotCommand(
             command='k',
-            description='Выбор случайного варианта'
+            description=await _('Выбор случайного варианта', lang)
         ),
         BotCommand(
             command='ts',
-            description='Текст в речь'
+            description=await _('Текст в речь', lang)
         ),
         BotCommand(
             command='translate',
-            description='Перевести текст на русский или английский'
+            description=await _('Перевести текст на русский или английский', lang)
         ),
         BotCommand(
             command='translateto',
-            description='Перевод с любого на указанный'
+            description=await _('Перевод с любого на указанный', lang)
         ),
         BotCommand(
             command='coin',
-            description='Подбросить монетку'
+            description=await _('Подбросить монетку', lang)
         ),
         BotCommand(
             command='c',
-            description='Калькулятор'
+            description=await _('Калькулятор', lang)
         ),
         BotCommand(
             command='sound',
-            description='Вырезать звук из видео'
+            description=await _('Вырезать звук из видео', lang)
         ),
         BotCommand(
             command='real',
-            description='Сгенерировать изображение используя realisticVision'
+            description=await _('Сгенерировать изображение используя realisticVision', lang)
         ),
         BotCommand(
             command='dream',
-            description='Сгенерировать изображение используя dreamShaper'
+            description=await _('Сгенерировать изображение используя dreamShaper', lang)
         ),
         BotCommand(
             command='var',
-            description='Создать вариации фотографии'
+            description=await _('Создать вариации фотографии', lang)
         ),
         BotCommand(
             command='link',
-            description='Сократить ссылку'
+            description=await _('Сократить ссылку', lang)
         ),
         BotCommand(
             command='ping',
-            description='Посмотреть состояние серверов'
+            description=await _('Посмотреть состояние серверов', lang)
+        ),
+        BotCommand(
+            command='lang',
+            description=await _('Сменить язык', lang)
         ),
     ]
+    return commands_p
+
+async def commands_group(lang):
     commands_group = [
         BotCommand(
             command='in',
-            description='Стать участником группы'
+            description=await _('Стать участником группы', lang)
         ),
         BotCommand(
             command='out',
-            description='Перестать быть участником группы'
+            description=await _('Перестать быть участником группы', lang)
         ),
         BotCommand(
             command='all',
-            description='Отметить всех участников группы'
+            description=await _('Отметить всех участников группы', lang)
         ),
         BotCommand(
             command='queerstats',
-            description='Посмотреть статистику ежедневного конкурса'
+            description=await _('Посмотреть статистику ежедневного конкурса', lang)
         ),
-        # BotCommand(
-        #     command='game_help',
-        #     description='Игровые команды'
-        # ),
-        # BotCommand(
-        #     command='game',
-        #     description='Подробности игр'
-        # ),
-        # BotCommand(
-        #     command='spy_theme',
-        #     description='Игровые команды'
-        # ),
-        # BotCommand(
-        #     command='game',
-        #     description='Подробности игр'
-        # ),
     ]
+    return commands_group
+
+
+async def commands_admin(lang):
     commands_admin = [
         BotCommand(
             command='queer',
-            description='Включить ежедневный конкурс'
+            description=await _('Включить ежедневный конкурс', lang)
         ),
         BotCommand(
             command='mute',
-            description='Замутить пользователя'
+            description=await _('Замутить пользователя', lang)
         ),
         BotCommand(
             command='unmute',
-            description='Размутить пользователя'
+            description=await _('Размутить пользователя', lang)
         ),
         BotCommand(
             command='kick',
-            description='Исключить пользователя'
+            description=await _('Исключить пользователя', lang)
         ),
         BotCommand(
             command='ban',
-            description='забанить пользователя'
+            description=await _('Забанить пользователя', lang)
         ),
         BotCommand(
             command='unban',
-            description='Разбанить пользователя'
+            description=await _('Разбанить пользователя', lang)
         ),
         BotCommand(
             command='purge',
-            description='Удалить все сообщения до указанного'
+            description=await _('Удалить все сообщения до указанного', lang)
         ),
     ]
+    return commands_admin
+
+async def owner_commands(lang):
     owner_commands = [
         BotCommand(
             command='news',
-            description='Отправить рассылку'
+            description=await _('Отправить рассылку', lang)
         ),
         BotCommand(
             command='runqueer',
-            description='Начать конкурс'
+            description=await _('Начать конкурс', lang)
         ),
         BotCommand(
             command='temp_look',
-            description='Посмотреть содержимое temp'
+            description=await _('Посмотреть содержимое temp', lang)
         ),
         BotCommand(
             command='temp_del',
-            description='Удалить содержимое temp'
+            description=await _('Удалить содержимое temp', lang)
         ),
         BotCommand(
             command='server_dream',
-            description='Указать сервер для Dream'
+            description=await _('Указать сервер для Dream', lang)
         ),
         BotCommand(
             command='server_real',
-            description='Указать сервер для Real'
+            description=await _('Указать сервер для Real', lang)
         ),
         BotCommand(
             command='stats',
-            description='Просмтр статистики'
+            description=await _('Просмотр статистики', lang)
         ),
     ]
+    return owner_commands
 
-    await dp.bot.set_my_commands(commands_private, BotCommandScopeDefault())
-    await dp.bot.set_my_commands(commands_private + commands_group, BotCommandScopeAllGroupChats())
-    await dp.bot.set_my_commands(commands_private + commands_group + commands_admin, BotCommandScopeAllChatAdministrators())
-    await dp.bot.set_my_commands(commands_private + commands_group + commands_admin + owner_commands,BotCommandScopeChat(chat_id=owner_id))
+async def set_default_commands(dp):
+    for chat_id, lang in locales_dict.items():
+        if chat_id > 0:
+            try:
+                await dp.bot.set_my_commands(await commands_private(lang), BotCommandScopeChat(chat_id=chat_id))
+            except:
+                continue
+        else:
+            try:
+                await dp.bot.set_my_commands(await commands_private(lang) + await commands_group(lang), BotCommandScopeAllGroupChats())
+                await dp.bot.set_my_commands(await commands_private(lang) + await commands_group(lang) + await commands_admin(lang), BotCommandScopeAllChatAdministrators())
+            except:
+                continue
+    await dp.bot.set_my_commands(await commands_private('ru') + await commands_group('ru') + await commands_admin('ru') + await owner_commands('ru'), BotCommandScopeChat(chat_id=owner_id))
+
+async def set_command_lang(dp, chat_id, lang):
+    await dp.bot.set_my_commands(await commands_private(lang), BotCommandScopeChat(chat_id=chat_id))

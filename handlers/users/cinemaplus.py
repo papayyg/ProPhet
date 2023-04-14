@@ -24,7 +24,7 @@ async def command_cinemaplus(message: types.Message):
 async def send_page(page_num, chat_id, message_id=None):
     if page_num == -1: page_num = len(pages) - 1
     page = pages[page_num]
-    cinemaplus_kb = await inline_kp_cinema.cinema_menu(page_num, pages, page[2], 'cp')
+    cinemaplus_kb = await inline_kp_cinema.cinema_menu(page_num, pages, page[2], 'cp', chat_id)
     text = f'Страница {page_num+1} из {len(pages)}:\n\n{page[0]}'
     photo = page[1]
     async with aiohttp.ClientSession() as session:

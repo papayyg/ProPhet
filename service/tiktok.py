@@ -5,6 +5,7 @@ import requests
 from playwright.async_api import async_playwright
 import aiohttp
 import moviepy.video.fx.all as vfx
+import moviepy.audio.fx.all as afx
 import psutil
 from bs4 import BeautifulSoup
 from moviepy.editor import AudioFileClip, VideoFileClip, concatenate_videoclips
@@ -51,14 +52,19 @@ slide_duration = 2
 async def slide_to_video(path):
     image_files = [os.path.join(f'temp/', f) for f in os.listdir('temp/') if
                    f.endswith(f'{path}.jpg') and f.startswith('tiktok_')]
+    try:
+        image_files_sorted = sorted(image_files, key=lambda x: int(x.split('_')[2]))
+    except:
+        image_files_sorted = image_files
     image_slides = []
-    for image in image_files:
+    for image in image_files_sorted:
         slide = VideoFileClip(image).set_duration(slide_duration)
         image_slides.append(slide)
     music_clip = AudioFileClip(f'temp/tiktok_music_{path}.mp3')
     video_clips = []
-    if music_clip.duration > 20 > sum([image.duration for image in image_slides]):
-        music_clip = music_clip.set_duration(20)
+    image_duration = sum([image.duration+2 for image in image_slides])
+    if image_duration > music_clip.duration:
+        music_clip = afx.audio_loop(music_clip, duration=image_duration)
     audio_duration = music_clip.duration
     while sum([clip.duration for clip in video_clips]) < audio_duration:
         for i in image_slides:
@@ -68,7 +74,7 @@ async def slide_to_video(path):
     video_clip = concatenate_videoclips(video_clips, method="compose")
     video_clip = video_clip.set_audio(music_clip)
 
-    return await asyncio.to_thread(video_clip.write_videofile, f'temp/tiktok_video_{path}.mp4', fps=24, logger=None)
+    return await asyncio.to_thread(video_clip.write_videofile, f'temp/tiktok_video_{path}.mp4', fps=24, codec='mpeg4', preset='slower', bitrate='3000k', logger=None)
 
 
 async def check_slide(link):
@@ -86,7 +92,7 @@ async def adl(link, chat_type):
             Soup = BeautifulSoup(r, "html.parser")
             author = Soup.select_one('span.e17fzhrb1').text
             shortlink = f'<a href="{shortlink}">{author}</a>'
-            if chat_type == 'group': return '', '', shortlink
+            if chat_type == 'group': return '', '', shortlink, descr_second
             descr = ''
             for i in Soup.find_all('span', {'class': 'efbd9f0'}):
                 descr += f'{i.text} '

@@ -78,7 +78,7 @@ async def get_nb(login, password):
         return output_message
 
 
-async def get_journal(login, password):
+async def get_journal(login, password, chat_id):
     async with aiohttp.ClientSession() as session:
         headers, name = await get_auth(login, password, session)
         output_list = []

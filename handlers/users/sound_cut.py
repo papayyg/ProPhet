@@ -6,6 +6,9 @@ from moviepy.editor import *
 from loader import dp
 from utils.misc.throttling import rate_limit
 
+from locales.translations import _
+from utils.locales import locales_dict
+
 
 @rate_limit(limit=3)
 @dp.message_handler(commands=['sound'], commands_prefix="/!@")
@@ -26,4 +29,4 @@ async def command_sound(message: types.Message):
         remove(f"temp/{message.from_user.id-message.message_id}.mp4")
         remove(f"temp/{message.from_user.id-message.message_id}.mp3")
     else:
-        await message.reply("Напишите сообщение ответом на видео")
+        await message.reply(await _("Напишите сообщение ответом на видео", locales_dict[message.chat.id]))

@@ -3,6 +3,9 @@ from googletrans import Translator
 
 from loader import dp
 
+from locales.translations import _
+from utils.locales import locales_dict
+
 translator = Translator()
 
 @dp.message_handler(commands=['translate'], commands_prefix="/!@")
@@ -10,7 +13,7 @@ async def translate(message: types.Message):
     try:
         text = message.reply_to_message.text if message.reply_to_message else message.text.split(' ', 1)[1]
     except:
-        await message.reply('Введите текст для перевода')
+        await message.reply(await _('Введите текст для перевода', locales_dict[message.text]))
         return
     dest = 'en' if translator.detect(text).lang == 'ru' else 'ru'
     if message.reply_to_message:
@@ -30,4 +33,4 @@ async def translate_to(message: types.Message):
         else:
             await message.reply(f'{translation}')
     except Exception as ex:
-        await message.reply(f'⚠️ Ошибка: {translator.translate(ex, dest="ru").text}')
+        await message.reply(f'⚠️ Error: {translator.translate(ex, dest="ru").text}')

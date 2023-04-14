@@ -20,7 +20,7 @@ async def calculator(message: types.Message):
     except Exception as ex:
         if str(ex) == "name 'math' is not defined":
             await message.reply(f"⚠️ Ошибка: <i>Использовано неверное выражение</i>")
-        else: await message.reply(f"⚠️ Ошибка: <code>{ex}</code>")
+        else: await message.reply(f"⚠️ Error: <code>{ex}</code>")
 
 @rate_limit(limit=5)
 @dp.message_handler(commands=['c_help'], commands_prefix="/!@")

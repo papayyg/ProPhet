@@ -9,6 +9,8 @@ from loader import dp
 from service import region, tiktok
 from utils.misc.throttling import rate_limit
 
+from locales.translations import _
+from utils.locales import locales_dict
 
 @rate_limit(limit=5)
 @dp.message_handler(lambda message: (message.text.startswith('https://www.tiktok.com/') and '/t/' in message.text) or message.text.startswith('https://vt.tiktok') or (message.text.startswith('https://www.tiktok.com/') and 'video' in message.text), chat_type=["group", "supergroup"])
@@ -18,8 +20,8 @@ async def tiktok_download(message: types.Message):
         if await tiktok.check_slide(message.text):
             if await region.baku():
                 vide_id = "/".join(urlparse(message.text).path.split("/")[1:])
-                tt_kb = await tiktok_id_kb(vide_id)
-                await message.reply('<b>Вы отправили слайд-шоу</b>. Как вы хотите скачать?', reply_markup=tt_kb)
+                tt_kb = await tiktok_id_kb(vide_id, message.chat.id)
+                await message.reply(await _('<b>Вы отправили слайд-шоу</b>. Как вы хотите скачать?', locales_dict[message.chat.id]), reply_markup=tt_kb)
             else:
                 author, text, shortlink, audio, descr_second = await tiktok_slide_download(message, message.text, 'group')
                 await dp.bot.send_audio(chat_id=message.chat.id, audio=audio,
@@ -35,7 +37,7 @@ async def tiktok_download(message: types.Message):
             await message.delete()
             await tiktok.tiktok_del(message.chat.id - message.message_id)
     except Exception as ex:
-        await message.answer(f'⚠️ Ошибка: {ex}')
+        await message.answer(f'⚠️ Error: {ex}')
         await tiktok.tiktok_del(message.chat.id - message.message_id)
 
 @rate_limit(limit=5)
@@ -45,8 +47,8 @@ async def tiktok_download(message: types.Message):
         if await tiktok.check_slide(message.text):
             if await region.baku():
                 vide_id = "/".join(urlparse(message.text).path.split("/")[1:])
-                tt_kb = await tiktok_id_kb(vide_id)
-                await message.reply('<b>Вы отправили слайд-шоу</b>. Как вы хотите скачать?', reply_markup=tt_kb)
+                tt_kb = await tiktok_id_kb(vide_id, message.chat.id)
+                await message.reply(await _('<b>Вы отправили слайд-шоу</b>. Как вы хотите скачать?', locales_dict[message.chat.id]), reply_markup=tt_kb)
             else:
                 author, descr, shortlink, audio, descr_second = await tiktok_slide_download(message, message.text, 'private')
                 caption = f'👤 {shortlink}\n\n📝 {descr}' if descr != '' else f'👤 {shortlink}'
@@ -67,7 +69,7 @@ async def tiktok_download(message: types.Message):
             await message.delete()
             await tiktok.tiktok_del(message.chat.id - message.message_id)
     except Exception as ex:
-        await message.answer(f'⚠️ Ошибка: {ex}')
+        await message.answer(f'⚠️ Error: {ex}')
         await tiktok.tiktok_del(message.chat.id - message.message_id)
 
 async def tiktok_slide_download(message, full_link, type):
@@ -76,10 +78,11 @@ async def tiktok_slide_download(message, full_link, type):
     album = MediaGroup()
     image_files = [os.path.join('temp/', f) for f in os.listdir('temp/') if f.endswith(
         f'{message.chat.id - message.message_id}.jpg') and f.startswith('tiktok_img')]
-    for i, img in enumerate(image_files):
-        if i % 9 == 0 and i != 0:
-            await dp.bot.send_message(chat_id=message.chat.id, text='<b>Слишком много медиа! Доступно только первые 10.</b>')
-            break
+    image_files_sorted = sorted(image_files, key=lambda x: int(x.split('_')[2]))
+    for i, img in enumerate(image_files_sorted):
+        if i % 10 == 0 and i != 0:
+            await dp.bot.send_media_group(chat_id=message.chat.id, media=album)
+            album = MediaGroup()
         photo = InputFile(img)
         album.attach_photo(photo)
     audio = InputFile(f'temp/tiktok_music_{message.chat.id - message.message_id}.mp3')
@@ -88,7 +91,7 @@ async def tiktok_slide_download(message, full_link, type):
 
 @dp.callback_query_handler(lambda c: c.data.startswith('tt_photo:'), chat_type=["group", "supergroup"])
 async def tt_photo_kb(callback: types.CallbackQuery):
-    await dp.bot.edit_message_text('Отправил запрос, ожидайте..', callback.message.chat.id, callback.message.message_id)
+    await dp.bot.edit_message_text(await _('Отправил запрос, ожидайте..', locales_dict[callback.message.chat.id]), callback.message.chat.id, callback.message.message_id)
     user = callback.message.reply_to_message.from_user.get_mention(as_html=True)
     full_link = 'https://vt.tiktok.com/' + callback.data.split(':')[
         1] if '@' not in callback.data else 'https://www.tiktok.com/' + callback.data.split(':')[1]
@@ -102,7 +105,7 @@ async def tt_photo_kb(callback: types.CallbackQuery):
 
 @dp.callback_query_handler(lambda c: c.data.startswith('tt_photo:'))
 async def tt_photo_kb(callback: types.CallbackQuery):
-    await dp.bot.edit_message_text('Отправил запрос, ожидайте..', callback.message.chat.id, callback.message.message_id)
+    await dp.bot.edit_message_text(await _('Отправил запрос, ожидайте..', locales_dict[callback.message.chat.id]), callback.message.chat.id, callback.message.message_id)
     full_link = 'https://vt.tiktok.com/' + callback.data.split(':')[
         1] if '@' not in callback.data else 'https://www.tiktok.com/' + callback.data.split(':')[1]
     author, descr, shortlink, audio, descr_second = await tiktok_slide_download(callback.message, full_link, 'private')
@@ -118,7 +121,7 @@ async def tt_photo_kb(callback: types.CallbackQuery):
 
 @dp.callback_query_handler(lambda c: c.data.startswith('tt_video:'), chat_type=["group", "supergroup"])
 async def tt_video_kb(callback: types.CallbackQuery):
-    await dp.bot.edit_message_text('<b>Ожидайте.</b> Процесс может занять много времени...', callback.message.chat.id, callback.message.message_id)
+    await dp.bot.edit_message_text(await _('<b>Ожидайте.</b> Процесс может занять много времени...', locales_dict[callback.message.chat.id]), callback.message.chat.id, callback.message.message_id)
     full_link = 'https://vt.tiktok.com/' + callback.data.split(':')[
         1] if '@' not in callback.data else 'https://www.tiktok.com/' + callback.data.split(':')[1]
     author, descr, shortlink, descr_second = await tiktok.adl(full_link, 'group')
@@ -134,7 +137,7 @@ async def tt_video_kb(callback: types.CallbackQuery):
 
 @dp.callback_query_handler(lambda c: c.data.startswith('tt_video:'))
 async def tt_video_kb(callback: types.CallbackQuery):
-    await dp.bot.edit_message_text('<b>Ожидайте.</b> Процесс может занять много времени...', callback.message.chat.id, callback.message.message_id)
+    await dp.bot.edit_message_text(await _('<b>Ожидайте.</b> Процесс может занять много времени...', locales_dict[callback.message.chat.id]), callback.message.chat.id, callback.message.message_id)
     full_link = 'https://vt.tiktok.com/' + callback.data.split(':')[
         1] if '@' not in callback.data else 'https://www.tiktok.com/' + callback.data.split(':')[1]
     author, descr, shortlink, descr_second = await tiktok.adl(full_link, 'private')

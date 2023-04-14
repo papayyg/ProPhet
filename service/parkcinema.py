@@ -1,11 +1,13 @@
 import aiohttp
 from bs4 import BeautifulSoup
 
+from locales.translations import _
+from utils.locales import locales_dict
 
-async def parse_parkcinema():
+async def parse_parkcinema(chat_lang):
     output_film = []
     async with aiohttp.ClientSession() as session:
-        url = "https://parkcinema.az/?lang=ru"
+        url = f"https://parkcinema.az/?lang={chat_lang}"
         async with session.get(url) as response:
             soup = BeautifulSoup(await response.text(encoding='latin-1'), "html.parser")
 
@@ -14,10 +16,10 @@ async def parse_parkcinema():
                 title = details.find('a', class_='m-i-d-title').text
                 bytes_title = bytes(title, 'latin-1')
                 title = bytes_title.decode('utf-8')
-                temp  = f"https://parkcinema.az{details.find('a', class_='m-i-d-title').get('href')}?lang=ru"
+                temp  = f"https://parkcinema.az{details.find('a', class_='m-i-d-title').get('href')}?lang={chat_lang}"
                 if not temp.startswith('https://parkcinema.az/movies/'):
                     continue
-                link = f"https://mobile.parkcinema.az{details.find('a', class_='m-i-d-title').get('href')}?lang=ru"
+                link = f"https://mobile.parkcinema.az{details.find('a', class_='m-i-d-title').get('href')}?lang={chat_lang}"
                 date  = details.find('div', class_='m-i-d-date').text
                 bytes_date = bytes(date, 'latin-1')
                 date = bytes_date.decode('utf-8')
@@ -29,12 +31,12 @@ async def parse_parkcinema():
                 async with session.get(temp) as response:
                     soup = BeautifulSoup(await response.text(), 'html.parser')
 
-                    country = soup.find("label", string="Страна:").find_next_sibling().text.strip()
-                    year = soup.find("label", string="Год").find_next_sibling().text.strip()
-                    director = soup.find("label", string="Режиссер").find_next_sibling().text.strip()
-                    genre = soup.find("label", string="Жанр").find_next_sibling().text.strip()
-                    cast = soup.find("label", string="В ролях").find_next_sibling().text.strip().replace("\n", ", ")
-                    duration = soup.find("label", string="Длительность").find_next_sibling().text.strip()
+                    country = soup.find("label", string=await _("Страна:", chat_lang)).find_next_sibling().text.strip()
+                    year = soup.find("label", string=await _("Год", chat_lang)).find_next_sibling().text.strip()
+                    director = soup.find("label", string=await _("Режиссер", chat_lang)).find_next_sibling().text.strip()
+                    genre = soup.find("label", string=await _("Жанр", chat_lang)).find_next_sibling().text.strip()
+                    cast = soup.find("label", string=await _("В ролях", chat_lang)).find_next_sibling().text.strip().replace("\n", ", ")
+                    duration = soup.find("label", string=await _("Длительность", chat_lang)).find_next_sibling().text.strip()
 
                     temp = ''
                     if 'RU' in lang:
@@ -45,14 +47,10 @@ async def parse_parkcinema():
                         temp += '🇹🇷 '
                     if 'AZ' in lang:
                         temp += '🇦🇿 '
-
-                    output_film.append([f'<i><b>{title} ({year})</b></i>\n'
-                    f'<b>В кинотеатре:</b> <i>{date}</i>\n'
-                    f'<b>Страна:</b> <i>{country}</i>\n'
-                    f'<b>Форматы:</b> {temp}<i>{type}</i>\n'
-                    f'🧩 <b>Жанр:</b> <i>{genre}</i>\n'
-                    f'\U0001F3A5 <b>Режиссер:</b> <i>{director}</i>\n'
-                    f'\U0001F64D <b>В ролях:</b> <i>{cast}</i>\n'
-                    f'\U0001F39E <b>Длительность:</b> <i>{duration}</i>\n'
-                    f'\U0001F51E <b>Возрастные ограничения:</b> <i>{age}</i>', media, link])
+                    text = await _('<i><b>{title} ({year})</b></i>\n<b>В кинотеатре:</b> <i>{date}</i>\n<b>Страна:</b> <i>{country}</i>\n<b>Форматы:</b> {temp}<i>{type}</i>\n🧩 <b>Жанр:</b> <i>{genre}</i>\n\U0001F3A5 <b>Режиссер:</b> <i>{director}</i>\n\U0001F64D <b>В ролях:</b> <i>{cast}</i>\n\U0001F39E <b>Длительность:</b> <i>{duration}</i>\n\U0001F51E <b>Возрастные ограничения:</b> <i>{age}</i>', chat_lang)
+                    
+                    output_film.append([text.format(
+                            title=title, year=year, date=date, country=country, temp=temp, type=type,
+                            genre=genre, director=director, cast=cast, duration=duration, age=age
+                        ), media, link])
     return output_film

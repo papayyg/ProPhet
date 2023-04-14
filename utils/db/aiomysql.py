@@ -172,6 +172,38 @@ class BotDB:
                 count_unibook = await cursor.fetchall()
                 return count_chats, count_unibook
     
+    async def get_local():
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cursor:
+                await cursor.execute("SELECT `chat_id`, `locales` FROM `chats`")
+                chats_locales = await cursor.fetchall()
+                return chats_locales
+    
+    async def locales_exists(chat_id):
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cursor:
+                result = await cursor.execute("SELECT `locales` FROM `chats` WHERE `chat_id` = %s", (chat_id,))
+                return result
+    
+    async def insert_lang(chat_id, lang):
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cursor:
+                await cursor.execute("INSERT INTO `chats` (`chat_id`, `locales`) VALUES (%s, %s)",(chat_id, lang,))
+                await conn.commit()
+
+    async def set_lang(chat_id, lang):
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cursor:
+                if await cursor.execute("SELECT `locales` FROM chats WHERE chat_id = %s",(chat_id,)):
+                    await cursor.execute(
+                        "UPDATE `chats` SET `locales` = %s WHERE `chat_id` = %s",(lang, chat_id,))
+                    await conn.commit()
+                else:
+                    await cursor.execute(
+                        "INSERT INTO `chats` (`chat_id`, `locales`) VALUES (%s, %s)",(chat_id, lang,))
+                    await conn.commit()
+                return
+    
     async def close(self):
         pool.close()
         await pool.wait_closed()

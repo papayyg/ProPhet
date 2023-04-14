@@ -5,6 +5,9 @@ import re
 import aiohttp
 from bs4 import BeautifulSoup as BS
 
+from locales.translations import _
+from utils.locales import locales_dict
+
 link = 'http://lms.adnsu.az/adnsuEducation/cs'
 
 async def faculty(session):
@@ -188,8 +191,8 @@ async def try_auth(login, password):
         else: return False
 
 
-async def summarys(username, password):
-    result = '<b>Все предметы:</b>\n\n'
+async def summarys(username, password, chat_id):
+    result = await _('<b>Все предметы:</b>\n\n', locales_dict[chat_id])
     summary_credit = 0
     total = 0
     temp_total = 0
@@ -273,14 +276,17 @@ async def summarys(username, password):
                     credit = info_3['credit']
                     result += f'<i>{subj_title}</i>: <b>{final_point} {credit}</b>\n'
                 if sem_credit != 0:
-                    result += f'✅ <b><i>Средний балл за семестр: {round(sem_point / sem_credit, 3)} ({sem_point} {sem_credit})</i></b>\n\n'
+                    temp_text = await _('✅ <b><i>Средний балл за семестр: {sredniy} ({sem_point} {sem_credit})</i></b>\n\n', locales_dict[chat_id])
+                    result += temp_text.format(sredniy=round(sem_point / sem_credit, 3), sem_point=sem_point, sem_credit=sem_credit)
         if '❗️' in result:
-            result += f'🎓\nИтоговый средний балл: {round(total / summary_credit, 3)}\nСумма баллов: {total}\nСумма кредитов: {summary_credit}\n\nСредний балл без учета проблемных: {round(temp_total / temp_credit, 3)}\nСумма баллов: {temp_total}\nСумма кредитов: {temp_credit}'
+            temp_text = await _('🎓\nИтоговый средний балл: {sredniy}\nСумма баллов: {total}\nСумма кредитов: {summary_credit}\n\nСредний балл без учета проблемных: {sredniy_p}\nСумма баллов: {temp_total}\nСумма кредитов: {temp_credit}', locales_dict[chat_id])
+            result += temp_text.format(sredniy=round(total / summary_credit, 3), total=total, summary_credit=summary_credit, sredniy_p=round(temp_total / temp_credit, 3), temp_total=temp_total, temp_credit=temp_credit)
         else:
-            result += f'🎓\nИтоговый средний балл: {round(total / summary_credit, 3)}\nСумма баллов: {total}\nСумма кредитов: {summary_credit}'
+            temp_text = await _('🎓\nИтоговый средний балл: {sredniy}\nСумма баллов: {total}\nСумма кредитов: {summary_credit}', locales_dict[chat_id])
+            result += temp_text.format(sredniy=round(total / summary_credit, 3), total=total, summary_credit=summary_credit)
     return result
 
-async def summary(username, password):
+async def summary(username, password, chat_id):
     result = ''
     summary_credit = 0
     total = 0
@@ -361,12 +367,14 @@ async def summary(username, password):
                         temp_credit += int(credit)
                     credit = info_3['credit']
         if s == 1:
-            result += f'\nИтоговый средний балл: {round(total / summary_credit, 3)}\nСумма баллов: {total}\nСумма кредитов: {summary_credit}\n\nСредний балл без учета проблемных: {round(temp_total / temp_credit, 3)}\nСумма баллов: {temp_total}\nСумма кредитов: {temp_credit}'
+            temp_text = await _('🎓\nИтоговый средний балл: {sredniy}\nСумма баллов: {total}\nСумма кредитов: {summary_credit}\n\nСредний балл без учета проблемных: {sredniy_p}\nСумма баллов: {temp_total}\nСумма кредитов: {temp_credit}', locales_dict[chat_id])
+            result += temp_text.format(sredniy=round(total / summary_credit, 3), total=total, summary_credit=summary_credit, sredniy_p=round(temp_total / temp_credit, 3), temp_total=temp_total, temp_credit=temp_credit)
         else:
-            result += f'\nИтоговый средний балл: {round(total / summary_credit, 3)}\nСумма баллов: {total}\nСумма кредитов: {summary_credit}'
+            temp_text = await _('🎓\nИтоговый средний балл: {sredniy}\nСумма баллов: {total}\nСумма кредитов: {summary_credit}', locales_dict[chat_id])
+            result += temp_text.format(sredniy=round(total / summary_credit, 3), total=total, summary_credit=summary_credit)
     return result
 
-async def journal_full(session, subjects_id, subj_title, student_name):
+async def journal_full(session, subjects_id, subj_title, student_name, chat_id):
     result_list = {}
     output = []
     for id in range(len(subjects_id)):
@@ -387,26 +395,34 @@ async def journal_full(session, subjects_id, subj_title, student_name):
             result_list[subjects_id[id]] = [subj_title[id], mark_list]
             temp = f'👤 {student_name}\n📚 <b>{subj_title[id].rstrip(".")}</b>\n'
             if mark_list[3] != '-':
-                temp += f'Cамостоятельная работа: <i>{mark_list[3]}</i>\n'
+                temp_text = await _('Cамостоятельная работа: <i>{mark}</i>\n', locales_dict[chat_id])
+                temp += temp_text.format(mark=mark_list[3])
             if mark_list[4] != '-':
-                temp += f'Презентация: <i>{mark_list[4]}</i>\n'
+                temp_text = await _('Презентация: <i>{mark}</i>\n', locales_dict[chat_id])
+                temp += temp_text.format(mark=mark_list[4])
             if mark_list[5] != '-':
-                temp += f'Курсовая работа: <i>{mark_list[5]}</i>\n'
+                temp_text = await _('Курсовая работа: <i>{mark}</i>\n', locales_dict[chat_id])
+                temp += temp_text.format(mark=mark_list[5])
             if mark_list[6] != '-':
-                temp += f'Лабораторная: <i>{mark_list[6]}</i>\n'
+                temp_text = await _('Лабораторная: <i>{mark}</i>\n', locales_dict[chat_id])
+                temp += temp_text.format(mark=mark_list[6])
             if mark_list[7] != '-':
-                temp += f'Квиз: <i>{mark_list[7]}</i>\n'
+                temp_text = await _('Квиз: <i>{mark}</i>\n', locales_dict[chat_id])
+                temp += temp_text.format(mark=mark_list[7])
             if mark_list[8] != '-':
-                temp += f'Мидтерм: <i>{mark_list[8]}</i>\n'
+                temp_text = await _('Мидтерм: <i>{mark}</i>\n', locales_dict[chat_id])
+                temp += temp_text.format(mark=mark_list[8])
             if mark_list[10] == '':
-                mark_list[10] = 'Еще не был'
+                mark_list[10] = await _('Еще не был', locales_dict[chat_id])
             if mark_list[11] == '':
-                mark_list[11] = 'После экзамена'
-            temp += f'Балл до экзамена: <i>{mark_list[9]}</i>\nЭкзамен: <i>{mark_list[10]}</i>\nИтоговый балл (Буква): <i>{mark_list[11]} {mark_list[12]}</i>\nНБ: <i>{mark_list[1]}%</i>\n'
+                mark_list[11] = await _('После экзамена', locales_dict[chat_id])
+
+            temp_text = await _('Балл до экзамена: <i>{mark_9}</i>\nЭкзамен: <i>{mark_10}</i>\nИтоговый балл (Буква): <i>{mark_11} {mark_12}</i>\nНБ: <i>{mark_1}%</i>\n', locales_dict[chat_id])
+            temp += temp_text.format(mark_9=mark_list[9], mark_10=mark_list[10], mark_11=mark_list[11], mark_12=mark_list[12], mark_1=mark_list[1])
             output.append(temp)
     return output
 
-async def full_info(username, password):
+async def full_info(username, password, chat_id):
     async with aiohttp.ClientSession() as session:
         payload = {
             "username": username,
@@ -419,9 +435,9 @@ async def full_info(username, password):
         group_id = await group(session)
         student_id, student_name = await student(session, year_id, group_id)
         subj_title, subjects_id = await subjects(session, sem_id, student_id, group_id)
-        return await journal_full(session, subjects_id, subj_title, student_name)
+        return await journal_full(session, subjects_id, subj_title, student_name, chat_id)
 
-async def get_files(session, subj_id, output_files, obj_files):
+async def get_files(session, subj_id, output_files, obj_files, chat_id):
     files_info = {'action': 'getModuleContent',
                     'moduleId': '1000062',
                     'topicId': '0',
@@ -432,22 +448,23 @@ async def get_files(session, subj_id, output_files, obj_files):
     for el in json.loads(files_request)['data']:
             file_id = el['file_id'].replace(' ', '')
             name = el['topic_name']
-            if name == "Sillabus-passiv":
-                name = 'Пассивный силлабус 📑'
-            elif name == "Sillabus":
-                name = "Силлабус 📟"
-            elif name == "Təqdimat":
-                name = "Темы презентаций 💿"
-            elif name == "Əlavə vəsaitlər":
-                name = "Дополнительные материалы 🗃"
-            elif name == "Mühazirə":
-                name = "Лекции 🗑"
+            if locales_dict[chat_id] == 'ru':
+                if name == "Sillabus-passiv":
+                    name = 'Пассивный силлабус 📑'
+                elif name == "Sillabus":
+                    name = "Силлабус 📟"
+                elif name == "Təqdimat":
+                    name = "Темы презентаций 💿"
+                elif name == "Əlavə vəsaitlər":
+                    name = "Дополнительные материалы 🗃"
+                elif name == "Mühazirə":
+                    name = "Лекции 🗑"
             temp_files.append([file_id, name])
             obj_files[int(file_id)] = name
     output_files.append(temp_files)
     return output_files, obj_files
 
-async def subjects_info(username, password):
+async def subjects_info(username, password, chat_id):
     async with aiohttp.ClientSession() as session:
         payload = {
             "username": username,
@@ -470,7 +487,7 @@ async def subjects_info(username, password):
                 'filterNo': '-1',
                 'subjectId': subj_id
             }
-            output_files, obj_files = await get_files(session, subj_id, output_files, obj_files)
+            output_files, obj_files = await get_files(session, subj_id, output_files, obj_files, chat_id)
             request = await session.post(link, data=info_data)
             info_request = await request.text()
             info_3 = json.loads(info_request.encode('utf-8'))['additionalData']['3'][0]
@@ -478,22 +495,30 @@ async def subjects_info(username, password):
             subj_title = info_3['subname'][info_3['subname'].find('>')+2:]
             credit = info_3['credit']
             m_hours, s_hours, l_hours = int(info_3['m_hours']), int(info_3['s_hours']), int(info_3['l_hours'])
-            hours = f'<b>{m_hours+s_hours+l_hours}</b> (Лекции: <b>{m_hours}</b>'
+            temp_hours = await _('<b>{hours}</b> (Лекции: <b>{m_hours}</b>', locales_dict[chat_id])
+            hours = temp_hours.format(hours=m_hours+s_hours+l_hours, m_hours=m_hours)
             if s_hours != 0:
-                hours += f', Семинары: <b>{s_hours}</b>'
+                temp_hours = await _(', Семинары: <b>{s_hours}</b>', locales_dict[chat_id])
+                hours += temp_hours.format(s_hours=s_hours)
             if l_hours != 0:
-                hours += f', Лабораторные: <b>{l_hours}</b>'
-            points = f'Экзамен (<b>{mark["e_i"]}</b>)'
+                temp_hours = await _(', Лабораторные: <b>{l_hours}</b>', locales_dict[chat_id])
+                hours += temp_hours.format(l_hours=l_hours)
+            temp_points = await _('Экзамен (<b>{mark}</b>)', locales_dict[chat_id])
+            points = temp_points.format(mark=mark["e_i"])
             if mark['midterm'] != '0':
                 points += f', Midterm (<b>{mark["midterm"]}</b>)'
             if mark['ki'] != '0':
-                points += f', Курсовая (<b>{mark["ki"]}</b>)'
+                temp_points = await _(', Курсовая (<b>{mark}</b>)', locales_dict[chat_id])
+                points += temp_points.format(mark=mark["ki"])
             if mark['e_l'] != '0':
-                points += f', Лабораторные (<b>{mark["e_l"]}</b>)'
+                temp_points = await _(', Лабораторные (<b>{mark}</b>)', locales_dict[chat_id])
+                points += temp_points.format(mark=mark["e_l"])
             if mark['presentation'] != '0':
-                points += f', Презентация (<b>{mark["presentation"]}</b>)'
+                temp_points = await _(', Презентация (<b>{mark}</b>)', locales_dict[chat_id])
+                points += temp_points.format(mark=mark["presentation"])
             if mark['si'] != '0':
-                points += f', Самостоятельные (<b>{mark["si"]}</b>)'
+                temp_points = await _(', Самостоятельные (<b>{mark}</b>)', locales_dict[chat_id])
+                points += temp_points.format(mark=mark["si"])
             if mark['quiz'] != '0':
                 points += f', Quiz (<b>{mark["quiz"]}</b>)'
             teachers = json.loads(info_request)['data']
@@ -501,23 +526,24 @@ async def subjects_info(username, password):
             for i in range(len(teachers)):
                 type = teachers[i]["les_type"]
                 if type == '(M)':
-                    teachers[i]["les_type"] = '(Лек.)'
+                    teachers[i]["les_type"] = await _('(Лек.)',locales_dict[chat_id])
                 elif type == '(S)':
-                    teachers[i]["les_type"] = '(Сем.)'
+                    teachers[i]["les_type"] = await _('(Сем.)',locales_dict[chat_id])
                 elif type == '(L)':
-                    teachers[i]["les_type"] = '(Лаб.)'
+                    teachers[i]["les_type"] = await _('(Лаб.)',locales_dict[chat_id])
                 elif type == '(M,S)':
-                    teachers[i]["les_type"] = '(Лек. и Сем.)'
+                    teachers[i]["les_type"] = await _('(Лек. и Сем.)',locales_dict[chat_id])
                 elif type == '(S,L)':
-                    teachers[i]["les_type"] = '(Сем. и Лаб.)'
+                    teachers[i]["les_type"] = await _('(Сем. и Лаб.)',locales_dict[chat_id])
                 elif type == '(M,L)':
-                    teachers[i]["les_type"] = '(Лек. и Лаб.)'
+                    teachers[i]["les_type"] = await _('(Лек. и Лаб.)',locales_dict[chat_id])
                 elif type == '(M,S,L)':
-                    teachers[i]["les_type"] = '(Лек., Сем. и Лаб.)'
+                    teachers[i]["les_type"] = await _('(Лек., Сем. и Лаб.)',locales_dict[chat_id])
                 if i != 0:
                     professor += ', '
                 professor += f'{" ".join(teachers[i]["emp_full_name"].split()[:2])} {teachers[i]["les_type"]}'
-            subjects_list.append(f'{student_name}\n<b><i>{subj_title}</i></b>\n💸 Количество кредитов: <i>{credit}</i>\n⏳ Общие часы: <i>{hours})</i>\n✅ Тип оценки: <i>{points}</i>\n👨‍🏫 Преподаватели: <i>{professor}</i>')
+            subject_temp = await _('{student_name}\n<b><i>{subj_title}</i></b>\n💸 Количество кредитов: <i>{credit}</i>\n⏳ Общие часы: <i>{hours})</i>\n✅ Тип оценки: <i>{points}</i>\n👨‍🏫 Преподаватели: <i>{professor}</i>',locales_dict[chat_id])
+            subjects_list.append(subject_temp.format(student_name=student_name,subj_title=subj_title,credit=credit, hours=hours,points=points,professor=professor))
         return subjects_list, output_files, obj_files
 
 

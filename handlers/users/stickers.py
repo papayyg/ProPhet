@@ -8,6 +8,8 @@ from data.config import bot_name
 from loader import bot, dp
 from service.drawer.drawer import BubbleDrawer
 
+from locales.translations import _
+from utils.locales import locales_dict
 
 @dp.message_handler(commands=['qbs'], commands_prefix="/!@")
 async def add_sticker(message: types.Message):
@@ -18,7 +20,7 @@ async def add_sticker(message: types.Message):
         name = message.chat.first_name
         stick_id = str(message.chat.id)
     if not message.reply_to_message:
-        await message.answer('Отправьте команду ответом на фото/стикер/текстовое сообщение')
+        await message.answer(await _('Отправьте команду ответом на фото/стикер/текстовое сообщение', locales_dict[message.chat.id]))
         return 0
     if message.reply_to_message.photo:
         file = await bot.get_file(message.reply_to_message.photo[-1].file_id)
@@ -40,12 +42,12 @@ async def add_sticker(message: types.Message):
             b.set_avatar(f'temp/{message.chat.id}.png')
         try: b.draw()
         except:
-            await message.reply('Сообщение слишком длинное')
+            await message.reply(await _('Сообщение слишком длинное', locales_dict[message.chat.id]))
             return
         b.save(f'temp/{message.chat.id}.png')
         png = InputFile(f'temp/{message.chat.id}.png')
     else:
-        await message.reply('Работает только с текстом, фото и стикером')
+        await message.reply(await _('Работает только с текстом, фото и стикером', locales_dict[message.chat.id]))
         return
     try:
         await bot.get_sticker_set(f'Stickers_{stick_id}_by_{bot_name}')
@@ -63,6 +65,6 @@ async def add_sticker(message: types.Message):
 async def delete_sticker(message: types.Message):
     try:
         await bot.delete_sticker_from_set(message.reply_to_message.sticker.file_id)
-        await message.reply('Стикер успешно удален')
+        await message.reply(await _('Стикер успешно удален', locales_dict[message.chat.id]))
     except Exception as ex:
-        await message.reply(f'⚠️ Ошибка: {ex}')
+        await message.reply(f'⚠️ Error: {ex}')

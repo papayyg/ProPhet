@@ -15,6 +15,11 @@ async def download_instagram(message, chat_type):
     files = [os.path.join('temp/', f) for f in os.listdir('temp/') if
              (f.endswith(f'{u_id}.jpg') or f.endswith(f'{u_id}.mp4')) and (
                          f.startswith('instagram_photo') or f.startswith('instagram_video'))]
+    try:
+        files_sorted = sorted(files, key=lambda x: int(x.split('_')[2]))
+    except:
+        files_sorted = files
+        
     user = message.from_user.get_mention(as_html=True)
     if chat_type == 'group':
         caption = f'👤 {user}\n\n🔗 {shortlink}'
@@ -23,11 +28,7 @@ async def download_instagram(message, chat_type):
             caption = f'👤 {shortlink}'
         else:
             caption = f'👤 {shortlink}\n\n📝 {descr}'
-    for i, content in enumerate(files):
-        if i % 10 == 0 and i != 0:
-            await dp.bot.send_message(chat_id=message.chat.id,
-                                      text='<b>Слишком много медиа! Доступно только первые 10.</b>')
-            break
+    for i, content in enumerate(files_sorted):
         final_content = InputFile(content)
         if content.endswith(f'{u_id}.mp4'):
             if i == 0:

@@ -26,7 +26,7 @@ async def error_handler(message, exception):
 async def errors_handler(update: types.Update, exception: Exception):
     try:
         await error_handler(update.message, exception)
-        await dp.bot.send_message(update.message.chat.id, f'⚠️ Произошла Ошибка: {translator.translate(exception, dest="ru").text}')
+        await dp.bot.send_message(update.message.chat.id, f'⚠️ Error: {translator.translate(exception, dest="ru").text}')
     except:
         await error_handler(update.callback_query.message, exception)
-        await dp.bot.send_message(update.callback_query.message.chat.id, f'⚠️ Произошла Ошибка: {translator.translate(exception, dest="ru").text}')
+        await dp.bot.send_message(update.callback_query.message.chat.id, f'⚠️ Error: {translator.translate(exception, dest="ru").text}')
