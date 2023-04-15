@@ -15,7 +15,7 @@ from utils.locales import locales_dict
 async def weather_command(message: types.Message):
     city = 'baku'
     if len(message.text.split()) != 1:
-        city = translator.translate(message.text[message.text.split()[1]], src='ru', dest='en').text
+        city = translator.translate(message.text.split()[1], src='ru', dest='en').text
     try:
         await message.reply(await get_weather(city, message.chat.id))
     except:

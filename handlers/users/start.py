@@ -20,7 +20,7 @@ async def start_cmd(message):
         await BotDB.chat_update(message.chat.id, message.from_user.first_name)
     else:
         await BotDB.add_chat(message.chat.id, message.from_user.first_name)
-        await dp.bot.send_message(log_channel, f'🟣 {message.from_user.get_mention(as_html=True)} подписался на бота!')
+        
 
 @rate_limit(limit=5)
 @dp.message_handler(commands=['start'], commands_prefix="/!@")
@@ -47,6 +47,7 @@ async def state_edu(callback_query: types.CallbackQuery, state: FSMContext):
     locales_dict[callback_query.message.chat.id] = lang
     await dp.bot.delete_message(callback_query.message.chat.id, callback_query.message.message_id)
     await set_command_lang(dp, callback_query.message.chat.id, lang)
+    await dp.bot.send_message(log_channel, f'🟣 {callback_query.message.reply_to_message.from_user.get_mention(as_html=True)} подписался на бота!')
     if callback_query.data.split('_')[2] == 's':
         await start_cmd(callback_query.message.reply_to_message)
     else:

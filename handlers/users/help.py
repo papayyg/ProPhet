@@ -38,7 +38,7 @@ help_msg = '''<i><b>Все команды бота:</b></i>
 /dbs - Отправьте ответом на стикер из пака чата, чтобы удалить его из набора
 
 <i>Отправьте ссылку на фото или видео <b>Instagram</b>, чтобы скачать</i>
-<i>Отправьте ссылку на <b>TikTok</b>, чтобы скачать видео без водяного знака</i>
+<i>Отправьте ссылку на <b>TikTok</b>, чтобы скачать видео или слайд-шоу</i>
 <i>Отправьте ссылку на <b>Youtube Shorts</b>, чтобы скачать видео</i>
 <i>Отправьте ссылку на <b>Youtube видео</b> до 3.5 минут, чтобы скачать его</i>
 
@@ -55,49 +55,50 @@ help_msg = '''<i><b>Все команды бота:</b></i>
 /ping - Посмотреть состояние серверов
 /lang - Сменить язык'''
 
-help_msg_az = '''<i><b>Bütün bot əmrləri</b></i>
+help_msg_az = '''<i><b>Bütün bot funksiyaları</b></i>
 <b>Əmr prefiksləri: / @ !</b>
 
 /n - Bot "Bəli" və ya "Xeyr" cavabı verir
-/l <i><b>*dən*</b></i> <i><b>*qədər*</b></i> - Intervalda təsadüfi sayı seçir
-/k <i><b>*Boşluqlarla ayrılmış seçimlərin siyahısı*</b></i> - Göstərilənlərdən təsadüfi seçim
-/coin - Bot sikkə çevirəcək
-/c <i><b>*riyaziyyat ifadəsi*</b></i> - Riyaziyyat ifadəsi üçün cavabı hesablayın (ətraflı məlumat üçün/c_help)
-/sound - Videodan səsi kəsmək üçün ona cavab verin.
-Kürə, <i>"Sual"</i> - Sehrli kürədən soruş
+/l <i><b>*dən*</b></i> <i><b>*qədər*</b></i> - Aralıqda təsadüfi bir nömrənin seçimi
+/k <i><b>*Boşluqlarla ayrılmış seçimlərin siyahısı*</b></i> - Siyahıdakı seçimlərdən birini təsadüfi seçmək
+/coin - Bot bir sikkə atır
+/c <i><b>*riyaziyyat ifadəsi*</b></i> - Riyaziyyat ifadəsi üçün cavabı hesablamaq (ətraflı məlumat üçün/c_help)
+/sound - Videodan səsi kəsmək üçün video mesajına cavab verin
+Kürə, <i>"Sual"</i> - Sehrli kürədən soruşmaq
 
-<i>Mətnə çevirmək üçün səsli mesaj göndərin</i>
-<i>Səs vasitəsilə GPT sorğusu göndərmək üçün səsli mesajın əvvəlindəki botla (bot,) əlaqə saxlayın</i>
-/ts <i><b>*Mətn*</b></i>- Mətndən nitqə tərcümə
+<i>Səsli mesajın yazılı mətnə çevirməsi</i>
+<i>GPT-e sorgu gondermek ucun sesli mesajin evvelinde bota muraciyyet edin (bot,) </i>
+/ts <i><b>*Mətn*</b></i>- Yazılı mesajın səsli mesaja çevrilməsi
 
-/parkcinema - ParkCinema kinoteatrlarındakı premyeraların siyahısına baxın
-/cinemaplus - CinemaPlus kinoteatrlarındakı premyeraların siyahısına baxın
+/parkcinema - ParkCinema kinoteatrlarında premyeraların siyahısına baxmaq
+/cinemaplus - CinemaPlus kinoteatrlarında premyeraların siyahısına baxmaq
 
-/link <b>*link*</b> - Qısaldılmış keçidi qaytarır
-/hava <i><b>İngiliscə şəhər adı və ya az</b></i> - Bakıda və ya müəyyən şəhərdə havaya baxın
-/translate - Rus dilindən ingilis dilinə və ya hər hansı digər dildən rus dilinə tərcümə etmək
+/link <b>*link*</b> - Qısaldılmış linki qaytarır
+/weather <i><b>İngiliscə şəhər adı</b></i> - Bakıda və ya müəyyən şəhərdə havaya baxmaq
+/translate - Rus dilindən ingilis dilinə və ya hər hansı digər dildən rus dilinə tərcümə
 /translateto <i><b>dil kodu</b></i> - İstənilən dildən göstərilən dilə tərcümə etmək üçün (<a href="https://www.fincher.org/Utilities/CountryLanguageList.shtml" >Kod </a> dilləri iki hərf kimi göstərilməlidir)
 <i>dəyər</i> <b>valyutadan</b> to <b>valyutaya</b> - Valyutanı çevir (Məsələn: 100 usd to azn)
 
-/qbs - Stikeri söhbət paketinə əlavə etmək üçün foto/stiker/mətn mesajına cavab verin
-/dbs - Paketdən silmək üçün söhbət paketindən stikerə cavab verin
+/qbs - Stikeri çat paketinə əlavə etmək üçün foto/stiker/mətn mesajına cavab verin
+/dbs - Stikeri dəstdən çıxarmaq üçün bu əmri stikerə cavabla göndərin
 
-<i>Endirmək üçün foto və ya video linkini <b>Instagram</b>-a göndərin</i>
-<i>Su nişanı olmadan video yükləmək üçün <b>TikTok</b>-a keçid göndərin</i>
-<i>Videonu endirmək üçün <b>Youtube Shorts</b>-a keçid göndərin</i>
-<i>Endirmək üçün <b>Youtube videosuna</b> 3,5 dəqiqəyə qədər link göndərin</i>
+<i><b>Instagram</b> foto və ya video yükləmək üçün link göndərin</i>
+<i><b>TikTok</b>-dan video və ya slayd şousunu yükləmək üçün link göndərin</i>
+<i><b>Youtube Shorts</b>-dan video yükləmək üçün link göndərin</i>
+<i><b>YouTube-dan video</b> (3.5 dəqiqəyə qədər) yükləmək üçün link göndərin</i>
 
-GPT botuna sorğu göndərmək üçün bot və ya bot, ardınca vergül, maraqlandığınız mövzu və ya sualı yazın
+GPT botuna sorğu göndərmək üçün əvvəlcə yazın bot, (bot, ) və sonra vergüldən sonra maraqlandığınız mövzunu və ya sualı daxil edin
+image yazın və sonra AI-nin çəkməli olduğu şəkli vergüldən sonra təsvir edin (image, )
 Foto və ya şəkil yazın, sonra vergüldən sonra AI-nin çəkməli olduğu şəkli yazın.
 /var - Fotonun variasiyalarını yaratmaq üçün ona cavab yazın
 
-<i>Тестовые функции, могут не всегда работать</i>
-/real <b>*promt*</b> - Сгенерировать изображение используя модель Realistic Vision v2
-/dream <b>*promt*</b> - Сгенерировать изображение используя модель Dream Shaper 4
+<i>Test funksiyaları, işləməyə bilər</i>
+/real <b>*promt*</b> - Realistic Vision v2 modelindən istifadə edərək şəkil yaratmaq
+/dream <b>*promt*</b> - Dream Shaper 4 modelindən istifadə edərək şəkil yaratmaq
 
-/start - Xoş gəlmisiniz mesajı
+/start - Salam mesajı
 /help - Funksionallıqla bağlı yardım
-/ping - Server statusuna baxın
+/ping - Serverlərin vəziyyətinə baxmaq
 /lang - Dil dəyışmək'''
 
 help_unibook = '''<b>🛢 Unibook (ASOIU) и ✈️ Empro (NAA):</b>

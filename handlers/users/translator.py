@@ -13,7 +13,7 @@ async def translate(message: types.Message):
     try:
         text = message.reply_to_message.text if message.reply_to_message else message.text.split(' ', 1)[1]
     except:
-        await message.reply(await _('Введите текст для перевода', locales_dict[message.text]))
+        await message.reply(await _('Введите текст для перевода', locales_dict[message.chat.id]))
         return
     dest = 'en' if translator.detect(text).lang == 'ru' else 'ru'
     if message.reply_to_message:
@@ -24,7 +24,11 @@ async def translate(message: types.Message):
 @dp.message_handler(commands=['translateto'], commands_prefix="/!@")
 async def translate_to(message: types.Message):
     try:
-        text = message.reply_to_message.text if message.reply_to_message else message.text[message.text.find(' ', message.text.find(' ') + 1) + 1:]
+        try:
+            text = message.reply_to_message.text if message.reply_to_message else message.text[message.text.find(' ', message.text.find(' ') + 1) + 1:]
+        except:
+            await message.reply(await _('Введите текст для перевода', locales_dict[message.chat.id]))
+            return
         dest = message.text[message.text.find(' ') + 1:] if message.reply_to_message else message.text[message.text.find(' ') + 1:message.text.find(' ', message.text.find(' ') + 1)]
         translation = translator.translate(text, dest=dest).text
         if message.reply_to_message:

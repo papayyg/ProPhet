@@ -87,6 +87,7 @@ async def check_slide(link):
 async def adl(link, chat_type):
     async with aiohttp.ClientSession() as session:
         async with session.get(link) as response:
+            descr_second = 0
             shortlink = link
             r = await response.text()
             Soup = BeautifulSoup(r, "html.parser")
@@ -98,7 +99,6 @@ async def adl(link, chat_type):
                 descr += f'{i.text} '
             descr.replace('<', '\\<')
             descr.replace('>', '\\>')
-            descr_second = 0
             if len(descr) > 870:
                 descr_second = descr[870:]
                 descr = descr[:870]

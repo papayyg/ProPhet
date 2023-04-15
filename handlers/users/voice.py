@@ -24,7 +24,11 @@ async def voice_to_text(message: types.Message):
 @rate_limit(limit=3)
 @dp.message_handler(commands=['ts'], commands_prefix="/!@")
 async def text_to_speech(message: types.Message):
-    text = message.reply_to_message.text if message.reply_to_message else message.text.split(' ', 1)[1]
+    try:
+        text = message.reply_to_message.text if message.reply_to_message else message.text.split(' ', 1)[1]
+    except:
+        message.answer('Введите текст для озвучки')
+        return
     language = translator.detect(text).lang
     if type(language) == list: language = language[0]
     try:
