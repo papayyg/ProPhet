@@ -195,7 +195,7 @@ async def unibook_subjects(message: types.Message):
 async def send_page(page_num, chat_id, unique):
     if page_num == -1: page_num = len(output_pages[unique]) - 1
     page = output_pages[unique][page_num]
-    if 'кредитов' in page:
+    if 'кредитов' in page or 'Kreditlərin' in page:
         uni_kb = await inline_kp_uni.subjects_menu(page_num, output_pages[unique], unique, 'uni', chat_id)
     else:
         uni_kb = await inline_kp_uni.journal_menu(page_num, output_pages[unique], unique, 'uni', chat_id)
