@@ -21,5 +21,7 @@ from .uni import dp
 from .voice import dp
 from .weather import dp
 from .youtube import dp
+from .yandex import dp
+from .shazam import dp
 
 __all__ = ['dp']

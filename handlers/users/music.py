@@ -34,8 +34,8 @@ data = {
 async def send_music(message: types.Message):
     audio = open(f'data/music/{data[message.text.lower()]["src"]}.mp3', 'rb')
     if message.reply_to_message:
-        await bot.send_audio(message.chat.id, audio, title=data[message.text]["title"], performer=data[message.text]["performer"], reply_to_message_id=message.reply_to_message.message_id)
+        await bot.send_audio(message.chat.id, audio, title=data[message.text.lower()]["title"], performer=data[message.text.lower()]["performer"], reply_to_message_id=message.reply_to_message.message_id)
     else:
-        await bot.send_audio(message.chat.id, audio, title=data[message.text]["title"], performer=data[message.text]["performer"])
+        await bot.send_audio(message.chat.id, audio, title=data[message.text.lower()]["title"], performer=data[message.text.lower()]["performer"])
     await bot.delete_message(message.chat.id, message.message_id)
     audio.close()
