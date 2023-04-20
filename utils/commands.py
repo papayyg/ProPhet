@@ -102,6 +102,10 @@ async def commands_private(lang):
             description=await _('Вырезать звук из видео', lang)
         ),
         BotCommand(
+            command='sz',
+            description=await _('Распознать музыку', lang)
+        ),
+        BotCommand(
             command='real',
             description=await _('Сгенерировать изображение используя realisticVision', lang)
         ),

@@ -22,7 +22,7 @@ async def shazam_command(message: types.Message):
         elif message.reply_to_message.video:
             file = await dp.bot.get_file(message.reply_to_message.video.file_id)
         else:
-            await message.answer('Введите ответом на аудио/видео/голосовое сообщение/видео сообщение')
+            await message.answer('Введите ответом на аудио/видео/голосовое сообщение/видеосообщение')
             return
         await dp.bot.download_file(file.file_path, f"temp/{message.from_user.id - message.message_id}.mp3")
         out = await shazam.recognize_song(f"temp/{message.from_user.id - message.message_id}.mp3")
@@ -33,4 +33,4 @@ async def shazam_command(message: types.Message):
         await temp.delete()
         remove(f"temp/{message.from_user.id-message.message_id}.mp3")
     else:
-        await message.answer('Введите ответом на аудио/видео/голосовое сообщение/видео сообщение')
+        await message.answer('Введите ответом на аудио/видео/голосовое сообщение/видеосообщение')

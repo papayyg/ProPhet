@@ -22,6 +22,7 @@ help_msg = '''<i><b>Все команды бота:</b></i>
 <i>Отправьте голосовое сообщение, чтобы преобразовать его в текст</i>
 <i>Обратитесь к боту (бот,) в начале ГС, чтобы отправить запрос GPT через голос</i>
 /ts <i><b>*Текст*</b></i>- Перевод текста в речь
+/sz - Напишите ответом на аудио/видео/голосовое сообщение/видеосообщение, чтобы распознать музыку (Шазам)
 
 /parkcinema - Посмотреть список премьер в кинотеатрах ParkCinema
 /cinemaplus - Посмотреть список премьер в кинотеатрах CinemaPlus
@@ -41,6 +42,7 @@ help_msg = '''<i><b>Все команды бота:</b></i>
 <i>Отправьте ссылку на <b>TikTok</b>, чтобы скачать видео или слайд-шоу</i>
 <i>Отправьте ссылку на <b>Youtube Shorts</b>, чтобы скачать видео</i>
 <i>Отправьте ссылку на <b>Youtube видео</b> до 3.5 минут, чтобы скачать его</i>
+<i>Отправьте ссылку на трек из <b>Яндекс.Музыка</b> для его скачивания</i>
 
 Напишите бот,  или bot, и дальше после запятой интересующая вас тема или вопрос, чтоб отправить запрос боту GPT
 Напишите фото,  или image, и дальше после запятой образ, который должен нарисовать ИИ
@@ -69,6 +71,7 @@ Kürə, <i>"Sual"</i> - Sehrli kürədən soruşmaq
 <i>Səsli mesajın yazılı mətnə çevirməsi</i>
 <i>GPT-e sorgu gondermek ucun sesli mesajin evvelinde bota muraciyyet edin (bot,) </i>
 /ts <i><b>*Mətn*</b></i>- Yazılı mesajın səsli mesaja çevrilməsi
+/sz - Musiqini tanımaq üçün audio/video/səs/video mesaja cavab yazın (Shazam)
 
 /parkcinema - ParkCinema kinoteatrlarında premyeraların siyahısına baxmaq
 /cinemaplus - CinemaPlus kinoteatrlarında premyeraların siyahısına baxmaq
@@ -86,6 +89,7 @@ Kürə, <i>"Sual"</i> - Sehrli kürədən soruşmaq
 <i><b>TikTok</b>-dan video və ya slayd şousunu yükləmək üçün link göndərin</i>
 <i><b>Youtube Shorts</b>-dan video yükləmək üçün link göndərin</i>
 <i><b>YouTube-dan video</b> (3.5 dəqiqəyə qədər) yükləmək üçün link göndərin</i>
+<i><b>Yandex.Music</b>-dən musiqiyi yükləmək üçün link göndərin</i>
 
 GPT botuna sorğu göndərmək üçün əvvəlcə yazın bot, (bot, ) və sonra vergüldən sonra maraqlandığınız mövzunu və ya sualı daxil edin
 image yazın və sonra AI-nin çəkməli olduğu şəkli vergüldən sonra təsvir edin (image, )

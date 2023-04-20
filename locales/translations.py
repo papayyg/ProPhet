@@ -117,6 +117,7 @@ translations = {
         'Подбросить монетку': 'Qəpik at',
         'Калькулятор': 'Kalkulyator',
         'Вырезать звук из видео': 'Videodan səsi kəsin',
+        'Распознать музыку': 'Musiqinin adini tapmaq',
         'Сгенерировать изображение используя realisticVision': 'RealisticVision istifadə edərək şəkil yaradın',
         'Сгенерировать изображение используя dreamShaper': 'Dreamshaper istifadə edərək şəkil yaradın',
         'Создать вариации фотографии': 'Fotoqrafiya varyasyonları yaradın',
