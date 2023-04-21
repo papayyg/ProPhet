@@ -16,11 +16,8 @@ from utils.commands import set_command_lang
 
 async def start_cmd(message):
     await message.answer(await _('<b>Приветствую тебя, мой друг!</b> Я бот, созданный для того, чтобы <i>облегчить твою жизнь и сделать ее более продуктивной</i>. \n\nС моими возможностями ты можешь ознакомиться команду - /help', locales_dict[message.chat.id]))
-    if await BotDB.chats_exists(message.chat.id):
-        await BotDB.chat_update(message.chat.id, message.from_user.first_name)
-    else:
-        await BotDB.add_chat(message.chat.id, message.from_user.first_name)
-        
+    if not await BotDB.chats_exists(message.chat.id):
+        await BotDB.add_chat(message.chat.id, message.from_user.first_name)        
 
 @rate_limit(limit=5)
 @dp.message_handler(commands=['start'], commands_prefix="/!@")

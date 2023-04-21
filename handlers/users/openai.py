@@ -20,7 +20,9 @@ async def gpt_bot(message: types.Message):
     try:
         await temp.edit_text(gpt_answer, parse_mode='Markdown')
     except:
-        await temp.edit_text(gpt_answer, parse_mode=None)
+        gpt_answer.replace('<', '\\<')
+        gpt_answer.replace('>', '\\>')
+        await temp.edit_text(gpt_answer, parse_mode=None, disable_web_page_preview=True)
 
 @rate_limit(limit=20)
 @dp.message_handler(lambda message: (message.text.lower().startswith('фото,') or message.text.lower().startswith('image,')) and len(message.text) > 5)

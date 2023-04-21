@@ -1,6 +1,6 @@
 from aiogram.types import (BotCommand, BotCommandScopeAllChatAdministrators,
                            BotCommandScopeAllGroupChats, BotCommandScopeChat,
-                           BotCommandScopeDefault)
+                           BotCommandScopeChatAdministrators)
 
 from data.config import owner_id
 
@@ -102,7 +102,7 @@ async def commands_private(lang):
             description=await _('Вырезать звук из видео', lang)
         ),
         BotCommand(
-            command='sz',
+            command='shazam',
             description=await _('Распознать музыку', lang)
         ),
         BotCommand(
@@ -229,8 +229,8 @@ async def set_default_commands(dp):
                 continue
         else:
             try:
-                await dp.bot.set_my_commands(await commands_private(lang) + await commands_group(lang), BotCommandScopeAllGroupChats())
-                await dp.bot.set_my_commands(await commands_private(lang) + await commands_group(lang) + await commands_admin(lang), BotCommandScopeAllChatAdministrators())
+                await dp.bot.set_my_commands(await commands_private(lang) + await commands_group(lang), BotCommandScopeChat(chat_id=chat_id))
+                await dp.bot.set_my_commands(await commands_private(lang) + await commands_group(lang) + await commands_admin(lang), BotCommandScopeChatAdministrators(chat_id=chat_id))
             except:
                 continue
     await dp.bot.set_my_commands(await commands_private('ru') + await commands_group('ru') + await commands_admin('ru') + await owner_commands('ru'), BotCommandScopeChat(chat_id=owner_id))

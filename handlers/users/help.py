@@ -22,7 +22,7 @@ help_msg = '''<i><b>Все команды бота:</b></i>
 <i>Отправьте голосовое сообщение, чтобы преобразовать его в текст</i>
 <i>Обратитесь к боту (бот,) в начале ГС, чтобы отправить запрос GPT через голос</i>
 /ts <i><b>*Текст*</b></i>- Перевод текста в речь
-/sz - Напишите ответом на аудио/видео/голосовое сообщение/видеосообщение, чтобы распознать музыку (Шазам)
+/shazam - Напишите ответом на аудио/видео/голосовое сообщение/видеосообщение, чтобы распознать музыку (Шазам)
 
 /parkcinema - Посмотреть список премьер в кинотеатрах ParkCinema
 /cinemaplus - Посмотреть список премьер в кинотеатрах CinemaPlus
@@ -71,7 +71,7 @@ Kürə, <i>"Sual"</i> - Sehrli kürədən soruşmaq
 <i>Səsli mesajın yazılı mətnə çevirməsi</i>
 <i>GPT-e sorgu gondermek ucun sesli mesajin evvelinde bota muraciyyet edin (bot,) </i>
 /ts <i><b>*Mətn*</b></i>- Yazılı mesajın səsli mesaja çevrilməsi
-/sz - Musiqini tanımaq üçün audio/video/səs/video mesaja cavab yazın (Shazam)
+/shazam - Musiqini tanımaq üçün audio/video/səs/video mesaja cavab yazın (Shazam)
 
 /parkcinema - ParkCinema kinoteatrlarında premyeraların siyahısına baxmaq
 /cinemaplus - CinemaPlus kinoteatrlarında premyeraların siyahısına baxmaq
@@ -190,7 +190,6 @@ async def command_help_unibook(message: types.Message):
 @dp.message_handler(commands=['help'], commands_prefix="/!@")
 async def command_help(message: types.Message):
     await message.reply(await _('<b><i>Используйте команды ниже для получения подробной информации:</i></b>\n\n/help_all - Все основные функции\n/help_group - Весь функционал для групп\n/help_uni - Весь функционал связанные с платформами университетов\n\nВ случае проблем, багов, ошибок, вопросов, предложений, писать сюда - @papayyg', locales_dict[message.chat.id]))
-    if await BotDB.chats_exists(message.chat.id):
-        await BotDB.chat_update(message.chat.id, message.from_user.first_name)
-    else:
+    if not await BotDB.chats_exists(message.chat.id):
         await BotDB.add_chat(message.chat.id, message.from_user.first_name)
+        

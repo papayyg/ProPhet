@@ -20,5 +20,11 @@ async def yandex_download(message: types.Message):
     title, artist = short_track['title'], short_track['artists'][0]['name']
     await short_track.download_async(f'temp/{message.from_user.id - message.message_id}.mp3')
     music = InputFile(f'temp/{message.from_user.id - message.message_id}.mp3')
-    await message.answer_audio(music, title=title, performer=artist)
+    user = message.from_user.get_mention(as_html=True)
+    if message.chat.title:
+        caption = f"👤 {user} - 🎶 <i>*<a href='{message.text}'>Музыка</a>*</i>"
+    else:
+        caption = f"🎶 <i><a href='{message.text}'>Музыка</a></i>"
+    await message.answer_audio(music, title=title, performer=artist, caption=caption)
+    await message.delete()
     remove(f'temp/{message.from_user.id - message.message_id}.mp3')

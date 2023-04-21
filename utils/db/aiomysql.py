@@ -29,14 +29,14 @@ class BotDB:
         async with pool.acquire() as conn:
             async with conn.cursor() as cursor:
                 await cursor.execute("UPDATE `chats` SET `first_name` = %s, `join_time` = NOW() WHERE `chat_id` = %s",
-                                     (first_name, chat_id))
+                                     (first_name, chat_id,))
                 await conn.commit()
 
     async def check_chat_user(chat_id, user_id):
         async with pool.acquire() as conn:
             async with conn.cursor() as cursor:
                 result = await cursor.execute("SELECT `id` FROM `chat_users` WHERE `chat_id` = %s AND `user_id` = %s",
-                                              (chat_id, user_id))
+                                              (chat_id, user_id,))
                 return result
 
     async def check_chat(chat_id):
@@ -50,14 +50,14 @@ class BotDB:
             async with conn.cursor() as cursor:
                 await cursor.execute(
                     "INSERT INTO `chat_users` (`chat_id`, `user_id`, `first_name`, `user_name`) VALUES (%s, %s, %s, %s)",
-                    (chat_id, user_id, first_name, user_name))
+                    (chat_id, user_id, first_name, user_name,))
                 await conn.commit()
 
     async def remove_user(chat_id, user_id):
         async with pool.acquire() as conn:
             async with conn.cursor() as cursor:
                 await cursor.execute("DELETE FROM `chat_users` WHERE `chat_id` = %s AND `user_id` = %s",
-                                     (chat_id, user_id))
+                                     (chat_id, user_id,))
                 await conn.commit()
 
     async def all_user(chat_id):
@@ -212,3 +212,5 @@ class BotDB:
 loop = asyncio.get_event_loop()
 pool: aiomysql.Pool = loop.run_until_complete(
     BotDB.creatPool(config.DB_HOST, config.DB_USER, config.DB_PASS, config.DATABASE))
+
+pool_instance = pool
