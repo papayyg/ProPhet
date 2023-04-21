@@ -10,7 +10,7 @@ from utils.contest import contest_schedule
 
 @dp.message_handler(commands=['runqueer'], user_id=owner_id)
 async def contest_run(message: types.Message):
-    await contest_schedule()
+    await contest_schedule(dp)
 
 @rate_limit(limit=5)
 @dp.message_handler(chat_type=["group", "supergroup"], is_admin=True, commands=['queer'], commands_prefix="/!@")

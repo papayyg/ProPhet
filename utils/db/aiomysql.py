@@ -212,5 +212,3 @@ class BotDB:
 loop = asyncio.get_event_loop()
 pool: aiomysql.Pool = loop.run_until_complete(
     BotDB.creatPool(config.DB_HOST, config.DB_USER, config.DB_PASS, config.DATABASE))
-
-pool_instance = pool
