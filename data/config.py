@@ -17,6 +17,8 @@ OPEN_WEATHER=str(os.getenv("OPEN_WEATHER"))
 CURRENCY_API=str(os.getenv("CURRENCY_API"))
 YANDEX_TOKEN=str(os.getenv("YANDEX_TOKEN"))
 YOUTUBE_API=str(os.getenv("YOUTUBE_API"))
+CLIENT_ID=str(os.getenv("CLIENT_ID"))
+CLIENT_SECRET=str(os.getenv("CLIENT_SECRET"))
 
 owner_id = int(os.getenv("owner_id"))
 log_channel = int(os.getenv("log_channel"))

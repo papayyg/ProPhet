@@ -64,7 +64,10 @@ async def tiktok_download(message: types.Message):
             await tiktok.download_video(message.text, message.chat.id - message.message_id)
             author, descr, shortlink, descr_second = await tiktok.adl(message.text, 'private')
             video = InputFile(f'temp/tiktok_video_{message.chat.id - message.message_id}.mp4')
-            await message.answer_video(video, caption=f'👤 {shortlink}\n\n📝 {descr}')
+            audio = InputFile(f'temp/tiktok_music_{message.chat.id - message.message_id}.mp3')
+            caption = f'👤 {shortlink}\n\n📝 {descr}' if descr != '' else f'👤 {shortlink}'
+            await message.answer_video(video, caption=caption)
+            await message.answer_audio(audio, title=author, performer='ProPhet')
             if descr_second:
                     await message.answer(descr_second)
             await message.delete()

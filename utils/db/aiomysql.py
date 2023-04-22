@@ -21,8 +21,8 @@ class BotDB:
     async def add_chat(chat_id, first_name):
         async with pool.acquire() as conn:
             async with conn.cursor() as cursor:
-                await cursor.execute("INSERT INTO `chats` (`chat_id`, `first_name`) VALUES (%s, %s)",
-                                     (chat_id, first_name,))
+                print(first_name)
+                await cursor.execute("INSERT INTO `chats` (`chat_id`, `first_name`) VALUES (%s, %s)",(chat_id, first_name,))
                 await conn.commit()
 
     async def chat_update(chat_id, first_name):
@@ -191,7 +191,7 @@ class BotDB:
                 await cursor.execute("INSERT INTO `chats` (`chat_id`, `locales`) VALUES (%s, %s)",(chat_id, lang,))
                 await conn.commit()
 
-    async def set_lang(chat_id, lang):
+    async def set_lang(chat_id, name, lang):
         async with pool.acquire() as conn:
             async with conn.cursor() as cursor:
                 if await cursor.execute("SELECT `locales` FROM chats WHERE chat_id = %s",(chat_id,)):
@@ -200,7 +200,7 @@ class BotDB:
                     await conn.commit()
                 else:
                     await cursor.execute(
-                        "INSERT INTO `chats` (`chat_id`, `locales`) VALUES (%s, %s)",(chat_id, lang,))
+                        "INSERT INTO `chats` (`chat_id`, `first_name`, `locales`) VALUES (%s, %s, %s)",(chat_id, name, lang,))
                     await conn.commit()
                 return
     

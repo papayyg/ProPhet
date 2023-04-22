@@ -130,17 +130,20 @@ async def download_photo_music(link, path):
 
 
 async def tiktok_del(path):
-    for proc in psutil.process_iter():
-        try:
-            if proc.name() == "ffmpeg-win64-v4.2.2.exe":
-                proc.kill()
-        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            pass
-    for file in os.listdir("temp/"):
-        if file.startswith("tiktok_") and (
-                file.endswith(f"{path}.jpg") or file.endswith(f"{path}.mp3") or file.endswith(
-            f"{path}.webp") or file.endswith(f"{path}.mp4")):
-            os.remove(os.path.join("temp/", file))
+    try:
+        for proc in psutil.process_iter():
+            try:
+                if proc.name() == "ffmpeg-win64-v4.2.2.exe":
+                    proc.kill()
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+        for file in os.listdir("temp/"):
+            if file.startswith("tiktok_") and (
+                    file.endswith(f"{path}.jpg") or file.endswith(f"{path}.mp3") or file.endswith(
+                f"{path}.webp") or file.endswith(f"{path}.mp4")):
+                os.remove(os.path.join("temp/", file))
+    except Exception as ex:
+        print(ex)
 
 
 async def download_video(link, path):
@@ -175,8 +178,14 @@ async def download_video(link, path):
             html = await response.text()
             downloadSoup = BeautifulSoup(html, "html.parser")
             downloadLink = downloadSoup.a["href"]
+            music_link = downloadSoup.select_one('a.music')['href']
+            async with session.get(music_link) as downloadResponse:
+                content = await downloadResponse.read()
+                with open(f'temp/tiktok_music_{path}.mp3', "wb") as f:
+                    f.write(content)
             async with session.get(downloadLink) as downloadResponse:
                 content = await downloadResponse.read()
                 with open(f'temp/tiktok_video_{path}.mp4', "wb") as f:
                     f.write(content)
+                    
 

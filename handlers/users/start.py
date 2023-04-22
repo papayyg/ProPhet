@@ -40,7 +40,7 @@ async def state_edu(callback_query: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
     lang = data.get('lang')
     await state.finish()
-    await BotDB.set_lang(callback_query.message.chat.id, lang)
+    await BotDB.set_lang(callback_query.message.chat.id, callback_query.message.reply_to_message.from_user.first_name, lang)
     locales_dict[callback_query.message.chat.id] = lang
     await dp.bot.delete_message(callback_query.message.chat.id, callback_query.message.message_id)
     await set_command_lang(dp, callback_query.message.chat.id, lang)

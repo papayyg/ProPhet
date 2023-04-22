@@ -9,7 +9,7 @@ from data.config import YANDEX_TOKEN
 
 
 @rate_limit(limit=5)
-@dp.message_handler(lambda message: message.text.startswith('https://music.yandex.ru/album/') and 'track' in message.text)
+@dp.message_handler(lambda message: (message.text.startswith('https://music.yandex.ru/album/') or message.text.startswith('https://music.yandex.com/album/')) and 'track' in message.text)
 async def yandex_download(message: types.Message):
     client = await ClientAsync(YANDEX_TOKEN).init()
     url = message.text
