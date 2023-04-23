@@ -85,11 +85,6 @@ async def uni_nb(message: types.Message):
     except:
         await temp.edit_text(await _('Ошибка подключения. Повторите попытку', locales_dict[message.chat.id]))
         return
-    if await BotDB.chats_exists(message.chat.id):
-        await BotDB.chat_update(message.chat.id, message.from_user.first_name)
-    else:
-        await BotDB.add_chat(message.chat.id, message.from_user.first_name)
-        await dp.bot.send_message(log_channel, f'🟣 {message.from_user.get_mention(as_html=True)} подписался на бота!')
 
 @rate_limit(limit=60)
 @dp.message_handler(commands=['gpas'], commands_prefix="/!@")
