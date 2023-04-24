@@ -123,15 +123,16 @@ async def tt_photo_kb(callback: types.CallbackQuery):
     await dp.bot.delete_message(callback.message.chat.id, callback.message.reply_to_message.message_id)
     await tiktok.tiktok_del(callback.message.chat.id - callback.message.message_id)
 
-@dp.callback_query_handler(lambda c: c.data.startswith('tt_video:'), chat_type=["group", "supergroup"])
+@dp.callback_query_handler(lambda c: c.data.startswith('tt_video_'), chat_type=["group", "supergroup"])
 async def tt_video_kb(callback: types.CallbackQuery):
     await dp.bot.edit_message_text(await _('<b>Ожидайте.</b> Процесс может занять много времени...', locales_dict[callback.message.chat.id]), callback.message.chat.id, callback.message.message_id)
     full_link = 'https://vt.tiktok.com/' + callback.data.split(':')[
         1] if '@' not in callback.data else 'https://www.tiktok.com/' + callback.data.split(':')[1]
+    ver = callback.data.split('_')[2]
     author, descr, shortlink, descr_second = await tiktok.adl(full_link, 'group')
     user = callback.message.reply_to_message.from_user.get_mention(as_html=True)
     await tiktok.download_photo_music(full_link, callback.message.chat.id - callback.message.message_id)
-    await tiktok.slide_to_video(callback.message.chat.id - callback.message.message_id)
+    await tiktok.slide_to_video(callback.message.chat.id - callback.message.message_id, ver)
     video = InputFile(f'temp/tiktok_video_{callback.message.chat.id - callback.message.message_id}.mp4')
     await dp.bot.send_video(chat_id=callback.message.chat.id, video=video,
                             caption=f'👤 {user}\n\n🔗 {shortlink}')
@@ -139,14 +140,15 @@ async def tt_video_kb(callback: types.CallbackQuery):
     await dp.bot.delete_message(callback.message.chat.id, callback.message.reply_to_message.message_id)
     await tiktok.tiktok_del(callback.message.chat.id - callback.message.message_id)
 
-@dp.callback_query_handler(lambda c: c.data.startswith('tt_video:'))
+@dp.callback_query_handler(lambda c: c.data.startswith('tt_video_'))
 async def tt_video_kb(callback: types.CallbackQuery):
     await dp.bot.edit_message_text(await _('<b>Ожидайте.</b> Процесс может занять много времени...', locales_dict[callback.message.chat.id]), callback.message.chat.id, callback.message.message_id)
     full_link = 'https://vt.tiktok.com/' + callback.data.split(':')[
         1] if '@' not in callback.data else 'https://www.tiktok.com/' + callback.data.split(':')[1]
+    ver = callback.data.split('_')[2]
     author, descr, shortlink, descr_second = await tiktok.adl(full_link, 'private')
     await tiktok.download_photo_music(full_link, callback.message.chat.id - callback.message.message_id)
-    await tiktok.slide_to_video(callback.message.chat.id - callback.message.message_id)
+    await tiktok.slide_to_video(callback.message.chat.id - callback.message.message_id, ver)
     video = InputFile(f'temp/tiktok_video_{callback.message.chat.id - callback.message.message_id}.mp4')
     caption = f'👤 {shortlink}\n\n📝 {descr}' if descr != '' else f'👤 {shortlink}'
     await dp.bot.send_video(chat_id=callback.message.chat.id, video=video, parse_mode=None,

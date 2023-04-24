@@ -188,6 +188,7 @@ translations = {
         '(Сем. и Лаб.)': '(Məş. və Lab.)',
         '(Лек. и Лаб.)': '(Müh. və Lab.)',
         '(Лек., Сем. и Лаб.)': '(Müh., Məş. və Lab.)',
+        '2 (Если что-то не так на видео в 1)': '2 (1-dəki videoda səhv olarsa)',
         '{student_name}\n<b><i>{subj_title}</i></b>\n💸 Количество кредитов: <i>{credit}</i>\n⏳ Общие часы: <i>{hours})</i>\n✅ Тип оценки: <i>{points}</i>\n👨‍🏫 Преподаватели: <i>{professor}</i>': '{student_name}\n<b><i>{subj_title}</i></b>\n💸 Kreditlərin sayı: <i>{credit}</i>\n⏳ Ümumi saatlar: <i>{hours})</i>\n✅ Qiymət növü: <i>{points}</i>\n👨‍🏫 Müəllimlər: <i>{professor}</i>',
     }
 }
