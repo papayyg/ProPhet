@@ -128,7 +128,7 @@ async def tt_video_kb(callback: types.CallbackQuery):
     await dp.bot.edit_message_text(await _('<b>Ожидайте.</b> Процесс может занять много времени...', locales_dict[callback.message.chat.id]), callback.message.chat.id, callback.message.message_id)
     full_link = 'https://vt.tiktok.com/' + callback.data.split(':')[
         1] if '@' not in callback.data else 'https://www.tiktok.com/' + callback.data.split(':')[1]
-    ver = callback.data.split('_')[2]
+    ver = callback.data.split(':')[0].split('_')[2]
     author, descr, shortlink, descr_second = await tiktok.adl(full_link, 'group')
     user = callback.message.reply_to_message.from_user.get_mention(as_html=True)
     await tiktok.download_photo_music(full_link, callback.message.chat.id - callback.message.message_id)
@@ -145,7 +145,7 @@ async def tt_video_kb(callback: types.CallbackQuery):
     await dp.bot.edit_message_text(await _('<b>Ожидайте.</b> Процесс может занять много времени...', locales_dict[callback.message.chat.id]), callback.message.chat.id, callback.message.message_id)
     full_link = 'https://vt.tiktok.com/' + callback.data.split(':')[
         1] if '@' not in callback.data else 'https://www.tiktok.com/' + callback.data.split(':')[1]
-    ver = callback.data.split('_')[2]
+    ver = callback.data.split(':')[0].split('_')[2]
     author, descr, shortlink, descr_second = await tiktok.adl(full_link, 'private')
     await tiktok.download_photo_music(full_link, callback.message.chat.id - callback.message.message_id)
     await tiktok.slide_to_video(callback.message.chat.id - callback.message.message_id, ver)

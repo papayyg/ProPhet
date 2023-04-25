@@ -73,7 +73,7 @@ async def slide_to_video(path, ver):
                 break
     video_clip = concatenate_videoclips(video_clips, method="compose")
     video_clip = video_clip.set_audio(music_clip)
-    if ver == 1:
+    if ver == '1':
         return await asyncio.to_thread(video_clip.write_videofile, f'temp/tiktok_video_{path}.mp4', codec='libx264', logger=None)
     else:
         return await asyncio.to_thread(video_clip.write_videofile, f'temp/tiktok_video_{path}.mp4', codec='mpeg4', logger=None)
