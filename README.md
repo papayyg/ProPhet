@@ -88,7 +88,7 @@ git clone https://github.com/papayyg/ProPhet.git
 ```sh
 pip install -r requirements.txt
 ```
-2. Создайте файл с названием `.env` в корне проекта и вставьте в нее все переменные среды из таблицы ниже в виде:
+3. Создайте файл с названием `.env` в корне проекта и вставьте в нее все переменные среды из таблицы ниже в виде:
 ```sh
 ПЕРЕМЕННАЯ=значение
 ```
@@ -112,10 +112,15 @@ pip install -r requirements.txt
 | real                | Ссылка на Stable-diffusion с RealVision моделью|
 | dream               | Ссылка на Stable-diffusion с DreamShapper моделью|
 
-3. Установите ffmpeg с официального сайта:
+4. Установите ffmpeg с официального сайта:
 * https://ffmpeg.org/download.html
 
-4. Запустите `app.py`:
+5. Создайте базу данных и выполните sql файл:
+```sh
+mysql -u username -p database_name < db.sql
+```
+
+6. Запустите `app.py`:
 ```sh
 python app.py
 ```
