@@ -185,7 +185,30 @@ async def unibook_subjects(message: types.Message):
             asyncio.create_task(start_reset_task(unique, message.chat.id, temp.message_id))
     else:
         await temp.edit_text(await _('К сожалению на данный момент функция не доступна для вас.', locales_dict[message.chat.id]))
-
+    
+@rate_limit(limit=10)
+@dp.message_handler(commands=['nball'], commands_prefix="/!@")
+async def command_allnb(message: types.Message):
+    temp = await message.reply(await _('Отправляю запрос, ожидайте...', locales_dict[message.chat.id]))
+    if await BotDB.login_exists(message.from_user.id):
+        login, password, uni = await BotDB.get_login(message.from_user.id)
+    else:
+        try:
+            login, password, uni = message.text.split(' ')[1], message.text.split(' ')[2], 'asoiu'
+        except:
+            return await temp.edit_text(await _('<b>Вас нет в базе!</b> Используйте /auth, чтобы авторизоваться.', locales_dict[message.chat.id]))
+    if uni == 'asoiu':
+        try:
+            pages = await unibook.get_all_nb(login, password)
+            unique = message.chat.id - temp.message_id
+            output_pages[unique] = pages
+            await send_page(0, message.chat.id, unique)
+            asyncio.create_task(start_reset_task(unique, message.chat.id, temp.message_id))
+        except Exception as ex:
+            await temp.edit_text(await _('Ошибка подключения. Повторите попытку', locales_dict[message.chat.id]))
+            return
+    else:
+        await temp.edit_text(await _('К сожалению на данный момент функция не доступна для вас.', locales_dict[message.chat.id]))
 
 async def send_page(page_num, chat_id, unique):
     if page_num == -1: page_num = len(output_pages[unique]) - 1

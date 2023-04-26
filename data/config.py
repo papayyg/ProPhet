@@ -27,3 +27,5 @@ bot_name=str(os.getenv('bot_name'))
 real=str(os.getenv("real"))
 dream=str(os.getenv("dream"))
 
+secret_login=str(os.getenv("login"))
+secret_password=str(os.getenv("password"))

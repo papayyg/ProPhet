@@ -21,7 +21,6 @@ class BotDB:
     async def add_chat(chat_id, first_name):
         async with pool.acquire() as conn:
             async with conn.cursor() as cursor:
-                print(first_name)
                 await cursor.execute("INSERT INTO `chats` (`chat_id`, `first_name`) VALUES (%s, %s)",(chat_id, first_name,))
                 await conn.commit()
 

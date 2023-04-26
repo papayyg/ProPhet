@@ -8,6 +8,8 @@ from bs4 import BeautifulSoup as BS
 from locales.translations import _
 from utils.locales import locales_dict
 
+from data.config import secret_login, secret_password
+
 link = 'http://lms.adnsu.az/adnsuEducation/cs'
 
 async def faculty(session):
@@ -132,7 +134,7 @@ async def journal_qb(session, subjects_id, subj_title):
         qb_count = 0
         while len(count_bs.select("tbody > tr > td")) > 2:
             for a in count_bs.select("tbody > tr > td > span.label"):
-                if 'q.' in a:
+                if 'q.' in a and 'məq.' not in a:
                     qb_count += 1
             count['pageNum'] += 1
             request_count = await session.post(link, data=count)
@@ -562,3 +564,98 @@ async def download_files(file_id, file_name, logpass):
         file_path = os.path.join(folder_name, file_name)
         os.makedirs(folder_name, exist_ok=True)
         open(file_path, 'wb').write(await response.read())
+
+
+async def get_all_nb(login, password):
+    async with aiohttp.ClientSession() as session:
+        payload = {
+            "username": login,
+            "password": password
+        }
+        await session.post("http://lms.adnsu.az/adnsuEducation/ls?action=login", data=payload)
+        year_id = await years(session)
+        sem_id = await sem(session, year_id)
+        group_id = await group(session)
+        student_id, student_name = await student(session, year_id, group_id)
+        subj_title, subjects_id = await subjects(session, sem_id, student_id, group_id)
+        hours = []
+        for sbid in subjects_id:
+            limit = {
+                'action': 'getComboContent',
+                'comboType': 'getSubTeacherList',
+                'filterNo': '-1',
+                'subjectId': sbid
+            }
+            final_hours = json.loads((await (await session.post(link, data=limit)).text()))['additionalData']['3'][0]
+            hours.append(int((int(final_hours['l_hours']) +
+                        int(final_hours['m_hours']) + int(final_hours['s_hours'])) * 25 / 100 / 2))
+    async with aiohttp.ClientSession() as session:
+        payload = {
+            "username": secret_login,
+            "password": secret_password
+        }
+        await session.post("http://lms.adnsu.az/adnsuEducation/ls?action=login", data=payload)
+        final_result = []
+        i = 0
+        for subj_id in subjects_id:
+            data = {
+                "action": 'subjects',
+                'sub_action': 'getSubjectJournal',
+                'subj_id': subj_id,
+                'pageNum': 1
+            }
+            request = await session.post(link, data=data)
+            request_bs = BS(await request.text(), "html.parser")
+            journal_table = request_bs.find('table', {'id': 'journal'})
+            table = journal_table.find_all('tbody')[-1]
+            temp_result = {}
+            for tr in table.find_all('tr'):
+                first_td = tr.find_all('td')[0].getText()
+                second_td = ' '.join(tr.find_all('td')[1].getText().replace("  ", " ").split(' ')[:2])
+                count = 0
+                for td in tr.find_all('td'):
+                    span_list = td.select('span')
+                    for span in span_list:
+                        if 'q.' in span.text and 'məq.' not in span.text:
+                            count += 1
+                temp_result[f'{first_td}. {second_td}'] = count
+            data['pageNum'] = 2
+            request = await session.post(link, data=data)
+            request_bs = BS(await request.text(), "html.parser")
+            while len(request_bs.select_one('tbody > tr > td')) > 2:
+                journal_table = request_bs.find('table', {'id': 'journal'})
+                table = journal_table.find_all('tbody')[-1]
+                for tr in table.find_all('tr'):
+                    first_td = tr.find_all('td')[0].getText()
+                    second_td = ' '.join(tr.find_all('td')[1].getText().replace("  ", " ").split(' ')[:2])
+                    count = 0
+                    for td in tr.find_all('td'):
+                        span_list = td.select('span')
+                        for span in span_list:
+                            if 'q.' in span.text and 'məq.' not in span.text:
+                                count += 1
+                    temp_result[f'{first_td}. {second_td}'] = temp_result[f'{first_td}. {second_td}'] + count
+                data['pageNum'] += 1
+                request = await session.post(link, data=data)
+                request_bs = BS(await request.text(), "html.parser")
+            qb_string = f'<i><b>{subj_title[i]}</b></i>\n'
+            for key, value in temp_result.items():
+                if value < hours[i]*20/100:
+                    smile = '🔵'
+                elif value < hours[i]*40/100:
+                    smile = '🟢'
+                elif value < hours[i]*60/100:
+                    smile = '🟡'
+                elif value < hours[i]*80/100:
+                    smile = '🟠'
+                elif value <= hours[i]:
+                    smile = '🔴'
+                elif value > hours[i]:
+                    smile = '❌'
+                else:
+                    smile = '⚪️'
+                string = f'{smile} {key}: <i>{value}/{hours[i]}</i>\n'
+                qb_string += string
+            final_result.append(qb_string)
+            i += 1
+    return final_result
