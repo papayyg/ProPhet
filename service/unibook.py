@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import asyncio
 
 import aiohttp
 from bs4 import BeautifulSoup as BS
@@ -565,7 +566,6 @@ async def download_files(file_id, file_name, logpass):
         os.makedirs(folder_name, exist_ok=True)
         open(file_path, 'wb').write(await response.read())
 
-
 async def get_all_nb(login, password):
     async with aiohttp.ClientSession() as session:
         payload = {
@@ -658,4 +658,81 @@ async def get_all_nb(login, password):
                 qb_string += string
             final_result.append(qb_string)
             i += 1
+    return final_result
+
+async def get_all_journal(login, password, chat_id):
+    async with aiohttp.ClientSession() as session:
+        payload = {
+            "username": login,
+            "password": password
+        }
+        await session.post("http://lms.adnsu.az/adnsuEducation/ls?action=login", data=payload)
+        year_id = await years(session)
+        sem_id = await sem(session, year_id)
+        group_id = await group(session)
+        student_id, student_name = await student(session, year_id, group_id)
+        subj_title, subjects_id = await subjects(session, sem_id, student_id, group_id)
+    async with aiohttp.ClientSession() as session:
+        student_data = []
+        payload = {
+            "username": secret_login,
+            "password": secret_password
+        }
+        final_result = []
+        await session.post("http://lms.adnsu.az/adnsuEducation/ls?action=login", data=payload)
+        data = {
+                    "action": 'academicGroupOperations',
+                    'sub_action': 'loadAcademicGroup',
+                    'groupId': group_id,
+                }
+        request = await session.post(link, data=data)
+        request_bs = BS(await request.text(), "html.parser")
+        tr_elements = request_bs.find(class_='panel').find(class_='panel-body').find(class_='table-responsive').find('table').find('tbody').find_all('tr')
+        for element in tr_elements:
+            ths = element.find_all('th')
+            student_data.append(' '.join(ths[2].get_text(strip=True).replace("  ", " ").split(' ')[:2]))
+        types = ['1200', '1201', '1202', '1204', '1205', '1206']
+        modules = ['1000094', '1000092', '1000093', '1000095', '1000108', '1000109']
+        j = 0
+        for subj_id in subjects_id:
+            student_scores = {}
+            for item in student_data:
+                student_scores[item] = []
+            for type_id, module_id in zip(types, modules):
+                data = {
+                    "action": 'subjects',
+                    'sub_action': 'checkSubjectFreeWork',
+                    'subjectId': subj_id,
+                    'typeId': type_id
+                }
+                request = await session.post(link, data=data)
+                request_bs = BS(await request.text(), "html.parser")
+                if request_bs.getText() == '1':
+                    data = {
+                        "action": 'subjects',
+                        'sub_action': 'loadSubjectWorkList',
+                        'subjectId': subj_id,
+                        'typeId': type_id,
+                        'moduleId': module_id
+                    }
+                    request = await session.post(link, data=data)
+                    request_bs = BS(await request.text(), "html.parser")
+
+                    tr_elements = request_bs.find(id='subject-work-journal').find(id='sub_work_journal').find('tbody').find_all('tr')
+                    for element in tr_elements:
+                        tds = element.find_all('td')
+                        name = ' '.join(tds[1].get_text(strip=True).replace("  ", " ").split(' ')[:2])
+                        student_scores[name].append(tds[-1].get_text(strip=True))
+                else:
+                    for key in student_scores:
+                        student_scores[key].append('-')
+            output_str = await _('📚 <b><i>{subj_title}</i></b>\n<i>ФИ: Курс. | Самост. | През. | Лаб. | Квиз | Мид.</i>\n', locales_dict[chat_id])
+            output_str = output_str.format(subj_title=subj_title[j])
+            for i, (key, value) in enumerate(student_scores.items(), start=1):
+                value_sum = sum(float(x) for x in value if x != '-')
+                value_str = ' | '.join(str(v) for v in value)
+                line = f'{i}. {key}: <i>{value_str}</i> <b><u>{value_sum:.1f}</u></b>\n'
+                output_str += line
+            final_result.append(output_str) 
+            j+=1
     return final_result

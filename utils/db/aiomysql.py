@@ -203,6 +203,19 @@ class BotDB:
                     await conn.commit()
                 return
     
+    async def insert_headman(user_id):
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cursor:
+                await cursor.execute("INSERT INTO `headman` (`user_id`) VALUES (%s)", (user_id,))
+                await conn.commit()
+    
+    async def headman_exists(chat_id):
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cursor:
+                await cursor.execute("SELECT `id` FROM `headman` WHERE `user_id` = %s", (chat_id,))
+                result = await cursor.fetchone()
+                return bool(result)
+            
     async def close(self):
         pool.close()
         await pool.wait_closed()

@@ -1,9 +1,5 @@
-import asyncio
-from functools import partial
 from os import remove
-
 from aiogram import types
-from pytube import YouTube
 
 from loader import bot, dp
 from utils.misc.throttling import rate_limit
@@ -44,34 +40,35 @@ async def info_video(url):
 @rate_limit(limit=5)
 @dp.message_handler(lambda message: message.text.startswith('https://www.youtube.com/watch?v=') or message.text.startswith('https://youtube.com/watch?v=') or message.text.startswith('https://youtu.be/') or message.text.startswith('https://www.youtube.com/shorts/') or message.text.startswith('https://youtube.com/shorts/'), chat_type=["group", "supergroup"])
 async def videos_group(message: types.Message):
-    # try:
+    try:
         duration, author, title = await info_video(message.text)
         if int(duration) < 600:
             await youtube.download_video(message.text, message.from_user.id - message.message_id)
+            user = message.from_user.get_mention(as_html=True)
             video = InputFile(
                 f'temp/youtube_video_{message.from_user.id - message.message_id}.mp4')
-            caption = f'👤 <a href="{message.text}">{author}</a>\n\n📝 {title}'
+            caption = f'👤 {user}\n\n🔗 <a href="{message.text}">{author}</a>\n\n📝 {title}'
             await bot.send_video(chat_id=message.chat.id, video=video,
                                 caption=caption)
             await bot.delete_message(message.chat.id, message.message_id)
             remove(
                 f'temp/youtube_video_{message.from_user.id - message.message_id}.mp4')
-    # except Exception as ex:
-    #     print(ex)
-    #     await message.answer('Ошибка. Повторите попытку (Возможно видео недоступно).')
+    except Exception as ex:
+        print(ex)
+        await message.answer('Ошибка. Повторите попытку (Возможно видео недоступно).')
 
 
 @rate_limit(limit=5)
 @dp.message_handler(lambda message: message.text.startswith('https://www.youtube.com/watch?v=') or message.text.startswith('https://youtube.com/watch?v=') or message.text.startswith('https://youtu.be/') or message.text.startswith('https://www.youtube.com/shorts/') or message.text.startswith('https://youtube.com/shorts/'))
 async def videos_private(message: types.Message):
-    # try:
+    try:
         duration, author, title = await info_video(message.text)
         if int(duration) < 600:
             yt_kb = await inline_kp_youtube.youtube_kb(f'{message.text}', message.chat.id)
             await message.reply(f'<b>Выберите формат для загрузки:</b>\n<i>{author}\n{title}</i>', reply_markup=yt_kb)
-    # except Exception as ex:
-    #     print(ex)
-    #     await message.answer('Ошибка. Повторите попытку (Возможно видео недоступно).')
+    except Exception as ex:
+        print(ex)
+        await message.answer('Ошибка. Повторите попытку (Возможно видео недоступно).')
 
 
 @dp.callback_query_handler(lambda c: c.data.startswith('yt_video:'))
