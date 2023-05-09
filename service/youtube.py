@@ -3,10 +3,10 @@ import aiohttp
 async def download_video(link, path):
     json_data = {
         'url': link,
-        'ts': 1682633662727,
-        '_ts': 1682590840018,
+        'ts': 1683653670066,
+        '_ts': 1683647350473,
         '_tsc': 0,
-        '_s': 'faaeca2fe2fbeabac7186f7a43cb0e297a86c956ea1172e554f3ce7611c1c57f',
+        '_s': 'de558fe6532a4233ce9b07f659f9d30a5adfd98994848f6dcdcb36411b35155f',
     }
     async with aiohttp.ClientSession() as session:
         async with session.post('https://ssyoutube.com/api/convert', json=json_data) as response:
@@ -29,10 +29,10 @@ async def download_video(link, path):
 async def download_audio(link, path):
     json_data = {
         'url': link,
-        'ts': 1682633662727,
-        '_ts': 1682590840018,
+        'ts': 1683653670066,
+        '_ts': 1683647350473,
         '_tsc': 0,
-        '_s': 'faaeca2fe2fbeabac7186f7a43cb0e297a86c956ea1172e554f3ce7611c1c57f',
+        '_s': 'de558fe6532a4233ce9b07f659f9d30a5adfd98994848f6dcdcb36411b35155f',
     }
     async with aiohttp.ClientSession() as session:
         async with session.post('https://ssyoutube.com/api/convert', json=json_data) as response:
