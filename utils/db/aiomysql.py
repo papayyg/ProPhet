@@ -215,6 +215,13 @@ class BotDB:
                 await cursor.execute("SELECT `id` FROM `headman` WHERE `user_id` = %s", (chat_id,))
                 result = await cursor.fetchone()
                 return bool(result)
+    
+    async def get_all_headman():
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cursor:
+                await cursor.execute("SELECT `user_id` FROM `headman`")
+                chats = await cursor.fetchall()
+                return chats
             
     async def close(self):
         pool.close()

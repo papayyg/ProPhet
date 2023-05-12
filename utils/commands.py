@@ -3,6 +3,7 @@ from aiogram.types import (BotCommand, BotCommandScopeAllChatAdministrators,
                            BotCommandScopeChatAdministrators)
 
 from data.config import owner_id
+from utils.db.aiomysql import BotDB
 
 from locales.translations import _
 from utils.locales import locales_dict
@@ -187,6 +188,19 @@ async def commands_admin(lang):
     ]
     return commands_admin
 
+async def commands_headman(lang):
+    commands_headman = [
+        BotCommand(
+            command='nball',
+            description=await _('Посмотреть НБ у всей группы', lang)
+        ),
+        BotCommand(
+            command='journalall',
+            description=await _('Посмотерть журнал группы', lang)
+        ),
+    ]
+    return commands_headman
+
 async def owner_commands(lang):
     owner_commands = [
         BotCommand(
@@ -220,20 +234,29 @@ async def owner_commands(lang):
     ]
     return owner_commands
 
-async def set_default_commands(dp):
-    for chat_id, lang in locales_dict.items():
-        if chat_id > 0:
-            try:
-                await dp.bot.set_my_commands(await commands_private(lang), BotCommandScopeChat(chat_id=chat_id))
-            except:
-                continue
-        else:
-            try:
-                await dp.bot.set_my_commands(await commands_private(lang) + await commands_group(lang), BotCommandScopeChat(chat_id=chat_id))
-                await dp.bot.set_my_commands(await commands_private(lang) + await commands_group(lang) + await commands_admin(lang), BotCommandScopeChatAdministrators(chat_id=chat_id))
-            except:
-                continue
-    await dp.bot.set_my_commands(await commands_private('ru') + await commands_group('ru') + await commands_admin('ru') + await owner_commands('ru'), BotCommandScopeChat(chat_id=owner_id))
+async def set_default_commands(dp, index):
+    if index == 0:
+        headmen = await BotDB.get_all_headman()
+        id_list = [int(id[0]) for id in headmen]
+        for chat_id, lang in locales_dict.items():
+            if chat_id > 0:
+                try:
+                    if chat_id in id_list:
+                        await dp.bot.set_my_commands(await commands_private(lang) + await commands_headman(lang), BotCommandScopeChat(chat_id=chat_id))
+                    else:
+                        await dp.bot.set_my_commands(await commands_private(lang), BotCommandScopeChat(chat_id=chat_id))
+                except:
+                    continue
+            else:
+                try:
+                    await dp.bot.set_my_commands(await commands_private(lang) + await commands_group(lang), BotCommandScopeChat(chat_id=chat_id))
+                    await dp.bot.set_my_commands(await commands_private(lang) + await commands_group(lang) + await commands_admin(lang), BotCommandScopeChatAdministrators(chat_id=chat_id))
+                except:
+                    continue
+        await dp.bot.set_my_commands(await commands_private('ru') + await commands_headman('ru') + await commands_group('ru') + await commands_admin('ru') + await owner_commands('ru'), BotCommandScopeChat(chat_id=owner_id))
+    else:
+        await dp.bot.set_my_commands(await commands_private(locales_dict[index]) + await commands_headman(locales_dict[index]), BotCommandScopeChat(chat_id=index))
+
 
 async def set_command_lang(dp, chat_id, lang):
     await dp.bot.set_my_commands(await commands_private(lang), BotCommandScopeChat(chat_id=chat_id))

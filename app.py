@@ -6,7 +6,7 @@ async def on_startup(dp):
     await get_chats_locales()
 
     from utils.commands import set_default_commands
-    await set_default_commands(dp)
+    await set_default_commands(dp, 0)
 
     from utils.notify import on_startup_notify
     await on_startup_notify(dp)

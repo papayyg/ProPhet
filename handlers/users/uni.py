@@ -253,58 +253,78 @@ async def send_page(page_num, chat_id, unique):
 
 @dp.callback_query_handler(lambda c: c.data.startswith('uni_back:'))
 async def back_page(callback_query: types.CallbackQuery):
-    parts = callback_query.data.split(":")
-    unique = int(parts[1].split("_")[0])
-    page_num = int(parts[1].split("_")[1]) - 1
-    await send_page(page_num, callback_query.message.chat.id, unique)
+    try:
+        parts = callback_query.data.split(":")
+        unique = int(parts[1].split("_")[0])
+        page_num = int(parts[1].split("_")[1]) - 1
+        await send_page(page_num, callback_query.message.chat.id, unique)
+    except:
+        await callback_query.answer('Ошибка. Повторите попытку', show_alert=False)
+        await dp.bot.delete_message(callback_query.message.chat.id, callback_query.message.message_id)
 
 
 @dp.callback_query_handler(lambda c: c.data.startswith('uni_next:'))
 async def next_page(callback_query: types.CallbackQuery):
-    parts = callback_query.data.split(":")
-    unique = int(parts[1].split("_")[0])
-    page_num = int(parts[1].split("_")[1]) + 1
-    await send_page(page_num, callback_query.message.chat.id, unique)
+    try:
+        parts = callback_query.data.split(":")
+        unique = int(parts[1].split("_")[0])
+        page_num = int(parts[1].split("_")[1]) + 1
+        await send_page(page_num, callback_query.message.chat.id, unique)
+    except:
+        await callback_query.answer('Ошибка. Повторите попытку', show_alert=False)
+        await dp.bot.delete_message(callback_query.message.chat.id, callback_query.message.message_id)
 
 @dp.callback_query_handler(lambda c: c.data.startswith('uni_subj:'))
 async def subjects_page(callback_query: types.CallbackQuery):
-    parts = callback_query.data.split(":")
-    unique = int(parts[1].split("_")[0])
-    page_num = int(parts[1].split("_")[1])
-    markup_subjects = types.InlineKeyboardMarkup(row_width=1, )
-    for el in output_files[unique][0][page_num]:
-        file_id = el[0]
-        file_name = el[1]
-        markup_subjects.add(types.InlineKeyboardButton(f'{file_name}', callback_data=f'files:{unique}_{file_id}'))
-    markup_subjects.add(types.InlineKeyboardButton(await _("🔙 Назад", locales_dict[callback_query.message.chat.id]), callback_data=f'back:{unique}_{page_num}'))
-    await dp.bot.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id,
-                                text=await _('📝 Выберите нужный файл, чтобы скачать:', locales_dict[callback_query.message.chat.id]), reply_markup=markup_subjects)
+    try:
+        parts = callback_query.data.split(":")
+        unique = int(parts[1].split("_")[0])
+        page_num = int(parts[1].split("_")[1])
+        markup_subjects = types.InlineKeyboardMarkup(row_width=1, )
+        for el in output_files[unique][0][page_num]:
+            file_id = el[0]
+            file_name = el[1]
+            markup_subjects.add(types.InlineKeyboardButton(f'{file_name}', callback_data=f'files:{unique}_{file_id}'))
+        markup_subjects.add(types.InlineKeyboardButton(await _("🔙 Назад", locales_dict[callback_query.message.chat.id]), callback_data=f'back:{unique}_{page_num}'))
+        await dp.bot.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id,
+                                    text=await _('📝 Выберите нужный файл, чтобы скачать:', locales_dict[callback_query.message.chat.id]), reply_markup=markup_subjects)
+    except:
+        await callback_query.answer('Ошибка. Повторите попытку', show_alert=False)
+        await dp.bot.delete_message(callback_query.message.chat.id, callback_query.message.message_id)
 
 @dp.callback_query_handler(lambda c: c.data.startswith('files:'))
 async def files_download(callback_query: types.CallbackQuery):
-    parts = callback_query.data.split(":")
-    unique = int(parts[1].split("_")[0])
-    file_id = int(parts[1].split("_")[1])
-    file_name = f'{output_files[unique][1][file_id]}.doc'
     try:
-        await unibook.download_files(file_id, file_name, output_files[unique][2])
-    except:
-        await callback_query.message.answer(await _('Ошибка подключения. Повторите попытку', locales_dict[callback_query.message.chat.id]))
+        parts = callback_query.data.split(":")
+        unique = int(parts[1].split("_")[0])
+        file_id = int(parts[1].split("_")[1])
+        file_name = f'{output_files[unique][1][file_id]}.doc'
+        try:
+            await unibook.download_files(file_id, file_name, output_files[unique][2])
+        except:
+            await callback_query.message.answer(await _('Ошибка подключения. Повторите попытку', locales_dict[callback_query.message.chat.id]))
+            return
+        try:
+            doc = open(f'temp/{output_files[unique][2][0]}/{file_name}', 'rb')
+            await dp.bot.send_document(callback_query.message.chat.id, doc)
+            doc.close()
+            shutil.rmtree(f'temp/{output_files[unique][2][0]}')
+        except Exception as ex:
+            print(ex)
+            await dp.bot.answer_callback_query(callback_query_id=callback_query.id, show_alert=False, text=await _('Файл пустой!', locales_dict[callback_query.message.chat.id]))
+        await dp.bot.answer_callback_query(callback_query_id=callback_query.id)
         return
-    try:
-        doc = open(f'temp/{output_files[unique][2][0]}/{file_name}', 'rb')
-        await dp.bot.send_document(callback_query.message.chat.id, doc)
-        doc.close()
-        shutil.rmtree(f'temp/{output_files[unique][2][0]}')
-    except Exception as ex:
-        print(ex)
-        await dp.bot.answer_callback_query(callback_query_id=callback_query.id, show_alert=False, text=await _('Файл пустой!', locales_dict[callback_query.message.chat.id]))
-    await dp.bot.answer_callback_query(callback_query_id=callback_query.id)
-    return
+    except:
+        await callback_query.answer('Ошибка. Повторите попытку', show_alert=False)
+        await dp.bot.delete_message(callback_query.message.chat.id, callback_query.message.message_id)
 
 @dp.callback_query_handler(lambda c: c.data.startswith('back:'))
 async def back_kb(callback_query: types.CallbackQuery):
-    parts = callback_query.data.split(":")
-    page_num = int(parts[1].split("_")[1])
-    unique = int(parts[1].split("_")[0])
-    await send_page(page_num, callback_query.message.chat.id, unique)
+    try:
+        parts = callback_query.data.split(":")
+        page_num = int(parts[1].split("_")[1])
+        unique = int(parts[1].split("_")[0])
+        await send_page(page_num, callback_query.message.chat.id, unique)
+    except:
+        await callback_query.answer('Ошибка. Повторите попытку', show_alert=False)
+        await dp.bot.delete_message(callback_query.message.chat.id, callback_query.message.message_id)
