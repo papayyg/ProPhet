@@ -134,7 +134,7 @@ async def start_reset_task(unique, chat_id, message_id):
     await asyncio.sleep(120)
     await reset_variable(unique, chat_id, message_id)
 
-@rate_limit(limit=10)
+@rate_limit(limit=2)
 @dp.message_handler(commands=['journal', 'журнал'], commands_prefix="/!@")
 async def uni_journal(message: types.Message):
     user_id = message.from_user.id
@@ -143,6 +143,10 @@ async def uni_journal(message: types.Message):
         login, password, uni = await BotDB.get_login(user_id)
     else:
         return await temp.edit_text(await _('<b>Вас нет в базе!</b> Используйте /auth, чтобы авторизоваться.', locales_dict[message.chat.id]))
+    if ' ' in message.text:
+        text = message.text.split(' ')
+        login = text[1]
+        password = text[2]
     full_func = unibook.full_info if uni == 'asoiu' else naa.get_journal
     try:
         pages = await full_func(login, password, message.chat.id)

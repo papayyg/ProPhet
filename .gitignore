@@ -7,6 +7,7 @@ logs.log
 .flake8
 temp/*
 !temp/.gitkeep
+start.bat
 
 __pycache__/
 *.py[cod]

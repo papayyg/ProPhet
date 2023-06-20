@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BOT_TOKEN = str(os.getenv("API_TOKEN"))
+API_TOKEN = str(os.getenv("API_TOKEN"))
 TEST_TOKEN = str(os.getenv("TEST_TOKEN"))
 
 DATABASE=str(os.getenv("DATABASE"))
