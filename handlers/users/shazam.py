@@ -9,6 +9,7 @@ from shazamio import Shazam
 from data.config import YANDEX_TOKEN, CLIENT_ID, CLIENT_SECRET
 import httpx
 import asyncio
+from service import spotify
 
 
 async def get_spotify_link(title, author):
@@ -26,6 +27,20 @@ async def get_spotify_link(title, author):
             'q': f"{title} {author}", 'type': 'track', 'limit': 1}
         response = await client.get(endpoint, headers=headers, params=params)
         return response.json()["tracks"]["items"][0]["external_urls"]["spotify"]
+    
+
+
+async def get_spotify(link, path):
+    track_id = link.split("/")[4].split("?")[0]
+    track_info = await spotify.get_spotify_track_info(await spotify.get_spotify_access_token(), track_id)
+    await spotify.download_cover_image(track_info["album"]["images"][0]["url"], path)
+    track_title = track_info["name"]
+    artists = track_info["artists"][0]["name"]
+    image = InputFile(f'temp/image_{path}.jpg')
+    music_search = f'{track_info["artists"][0]["name"]} - {track_info["name"]}'
+    video_id = await spotify.search_youtube_video(music_search)
+    await spotify.download_audio(video_id, path)
+    return track_title, artists, image
 
 
 async def get_yandex(message, title, author):
@@ -77,6 +92,10 @@ async def shazam_command(message: types.Message):
             remove(f"temp/yandex_{message.from_user.id-message.message_id}.mp3")
         except:
             spotify_link = await get_spotify_link(out['track']['title'], out['track']['subtitle'])
-            await bot.send_message(message.chat.id, f'🎧 <b><i><a href="{spotify_link}">Spotify</a></i></b>', reply_to_message_id=temp.message_id, disable_web_page_preview=True)
+            track_title, artists, image = await get_spotify(spotify_link, message.from_user.id - message.message_id)
+            music = InputFile(f'temp/audio_{message.from_user.id - message.message_id}.mp3')
+            await bot.send_audio(message.chat.id, music, f'🎧 <b><i><a href="{spotify_link}">Spotify</a></i></b>', reply_to_message_id=temp.message_id, title=track_title, performer=artists, thumb=image)
+            remove(f"temp/audio_{message.from_user.id-message.message_id}.mp3")
+            remove(f"temp/image_{message.from_user.id-message.message_id}.jpg")
     else:
         await temp.edit_text('Введите ответом на аудио/видео/голосовое сообщение/видеосообщение')

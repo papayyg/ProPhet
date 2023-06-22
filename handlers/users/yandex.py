@@ -6,6 +6,9 @@ from yandex_music import ClientAsync
 from aiogram.types import InputFile
 import re
 from data.config import YANDEX_TOKEN
+import requests
+from bs4 import BeautifulSoup
+
 
 
 @rate_limit(limit=5)

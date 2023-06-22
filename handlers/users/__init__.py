@@ -23,5 +23,6 @@ from .weather import dp
 from .youtube import dp
 from .yandex import dp
 from .shazam import dp
+from .spotify import dp
 
 __all__ = ['dp']
