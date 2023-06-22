@@ -50,6 +50,7 @@ async def get_yandex(message, title, author):
     music_id = f'{track_id}:{album_id}'
     short_track = (await client.tracks([music_id]))[0]
     new_title, artist = short_track['title'], short_track['artists'][0]['name']
+    await short_track.download_cover_async(f'temp/image_{message.from_user.id - message.message_id}.jpg')
     await short_track.download_async(f'temp/yandex_{message.from_user.id - message.message_id}.mp3')
     return new_title, artist, f'https://music.yandex.ru/album/{album_id}/track/{track_id}'
 
@@ -88,8 +89,10 @@ async def shazam_command(message: types.Message):
             title, artist, yandex_link = await get_yandex(message, out['track']['title'], out['track']['subtitle'])
             spotify_link = await get_spotify_link(out['track']['title'], out['track']['subtitle'])
             music = InputFile(f'temp/yandex_{message.from_user.id - message.message_id}.mp3')
-            await bot.send_audio(message.chat.id, music, f'🎧 <b><i><a href="{yandex_link}">Яндекс.Музыка</a>\n🎶 <a href="{spotify_link}">Spotify</a></i></b>', reply_to_message_id=temp.message_id, title=title, performer=artist)
+            img = InputFile(f'temp/image_{message.from_user.id - message.message_id}.jpg')
+            await bot.send_audio(message.chat.id, music, f'🎧 <b><i><a href="{yandex_link}">Яндекс.Музыка</a>\n🎶 <a href="{spotify_link}">Spotify</a></i></b>', reply_to_message_id=temp.message_id, title=title, performer=artist, thumb=img)
             remove(f"temp/yandex_{message.from_user.id-message.message_id}.mp3")
+            remove(f'temp/image_{message.from_user.id - message.message_id}.jpg')
         except:
             spotify_link = await get_spotify_link(out['track']['title'], out['track']['subtitle'])
             track_title, artists, image = await get_spotify(spotify_link, message.from_user.id - message.message_id)

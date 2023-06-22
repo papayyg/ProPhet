@@ -2,7 +2,7 @@ from os import remove
 from aiogram import types
 from loader import bot, dp
 from utils.misc.throttling import rate_limit
-from yandex_music import ClientAsync
+from yandex_music import ClientAsync, Cover
 from aiogram.types import InputFile
 import re
 from data.config import YANDEX_TOKEN
@@ -20,14 +20,17 @@ async def yandex_download(message: types.Message):
     track_id = re.search(r"/track/(\d+)$", url).group(1)
     result = f"{track_id}:{album_id}"
     short_track = (await client.tracks([result]))[0]
+    await short_track.download_cover_async(f'temp/image_{message.from_user.id - message.message_id}.jpg')
     title, artist = short_track['title'], short_track['artists'][0]['name']
     await short_track.download_async(f'temp/{message.from_user.id - message.message_id}.mp3')
     music = InputFile(f'temp/{message.from_user.id - message.message_id}.mp3')
+    img = InputFile(f'temp/image_{message.from_user.id - message.message_id}.jpg')
     user = message.from_user.get_mention(as_html=True)
     if message.chat.title:
         caption = f"👤 {user} - 🎶 <i>*<a href='{message.text}'>Музыка</a>*</i>"
     else:
         caption = f"🎶 <i><a href='{message.text}'>Музыка</a></i>"
-    await message.answer_audio(music, title=title, performer=artist, caption=caption)
+    await message.answer_audio(music, title=title, performer=artist, caption=caption, thumb=img)
     await message.delete()
     remove(f'temp/{message.from_user.id - message.message_id}.mp3')
+    remove(f'temp/image_{message.from_user.id - message.message_id}.jpg')

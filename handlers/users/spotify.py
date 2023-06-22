@@ -8,12 +8,15 @@ from data.config import YANDEX_TOKEN
 from yandex_music import ClientAsync
 
 
-async def get_yandex(music_search, path):
+async def get_yandex(music_search, path, track_title):
     client = await ClientAsync(YANDEX_TOKEN).init()
     result = (await client.search(music_search)).best
     track_id, album_id = result["result"]["id"], result["result"]["albums"][0]["id"]
     music_id = f'{track_id}:{album_id}'
     short_track = (await client.tracks([music_id]))[0]
+    title = short_track['title']
+    if title != track_title:
+        raise ValueError("Ошибка: несоответствие имен")
     await short_track.download_async(f'temp/audio_{path}.mp3')
 
 
@@ -38,7 +41,7 @@ async def spotify_download(message: types.Message):
     music_search = f'{track_info["artists"][0]["name"]} - {track_info["name"]}'
 
     try:
-        await get_yandex(music_search, path)
+        await get_yandex(music_search, path, track_title)
     except:
         try:
             video_id = await spotify.search_youtube_video(music_search)
