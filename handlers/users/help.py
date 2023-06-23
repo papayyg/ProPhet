@@ -44,6 +44,7 @@ help_msg = '''<i><b>Все команды бота:</b></i>
 <i>Отправьте ссылку на <b>Youtube видео</b> до 5 минут, чтобы скачать его</i>
 <i>Отправьте ссылку на трек из <b>Яндекс.Музыка</b> для его скачивания</i>
 <i>Отправьте ссылку на трек из <b>Spotify</b> для его скачивания</i>
+<i>Отправьте ссылку на трек из <b>Apple Music</b> для его скачивания</i>
 
 
 Напишите бот,  или bot, и дальше после запятой интересующая вас тема или вопрос, чтоб отправить запрос боту GPT
@@ -93,6 +94,7 @@ Kürə, <i>"Sual"</i> - Sehrli kürədən soruşmaq
 <i><b>YouTube-dan video</b> (5 dəqiqəyə qədər) yükləmək üçün link göndərin</i>
 <i><b>Yandex.Music</b>-dən musiqiyi yükləmək üçün link göndərin</i>
 <i><b>Spotify</b>-dan musiqiyi yükləmək üçün link göndərin</i>
+<i><b>Apple Music</b>-dən musiqiyi yükləmək üçün link göndərin</i>
 
 GPT botuna sorğu göndərmək üçün əvvəlcə yazın bot, (bot, ) və sonra vergüldən sonra maraqlandığınız mövzunu və ya sualı daxil edin
 image yazın və sonra AI-nin çəkməli olduğu şəkli vergüldən sonra təsvir edin (image, )

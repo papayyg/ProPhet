@@ -24,5 +24,6 @@ from .youtube import dp
 from .yandex import dp
 from .shazam import dp
 from .spotify import dp
+from .apple import dp
 
 __all__ = ['dp']

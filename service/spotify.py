@@ -1,6 +1,6 @@
 import asyncio
 import aiohttp
-from data.config import CLIENT_ID, CLIENT_SECRET
+from data.config import CLIENT_ID, CLIENT_SECRET, YOUTUBE_API
 from pytube import YouTube
 
 async def get_spotify_access_token():
@@ -38,7 +38,7 @@ async def search_youtube_video(track_title):
         'part': 'snippet',
         'q': track_title,
         'maxResults': 1,
-        'key': 'AIzaSyD3-3veZRJVwX4RN40XI_2g_FsSr8zcP24',
+        'key': YOUTUBE_API,
     }
     async with aiohttp.ClientSession() as session:
         async with session.get('https://www.googleapis.com/youtube/v3/search', params=params) as response:
