@@ -94,6 +94,10 @@ async def unibook_gpas(message: types.Message):
         login, password, uni = await BotDB.get_login(message.from_user.id)
     else:
         return await temp.edit_text(await _('<b>Вас нет в базе!</b> Используйте /auth, чтобы авторизоваться.', locales_dict[message.chat.id]))
+    if ' ' in message.text:
+        text = message.text.split(' ')
+        login = text[1]
+        password = text[2]
     if uni == 'asoiu':
         try:
             await temp.edit_text(text=await unibook.summarys(login, password, message.chat.id))
@@ -111,6 +115,10 @@ async def unibook_gpa(message: types.Message):
         login, password, uni = await BotDB.get_login(message.from_user.id)
     else:
         return await temp.edit_text(await _('<b>Вас нет в базе!</b> Используйте /auth, чтобы авторизоваться.', locales_dict[message.chat.id]))
+    if ' ' in message.text:
+        text = message.text.split(' ')
+        login = text[1]
+        password = text[2]
     if uni == 'asoiu':
         try:
             await temp.edit_text(text=await unibook.summary(login, password, message.chat.id))

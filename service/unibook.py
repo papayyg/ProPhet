@@ -265,6 +265,7 @@ async def summarys(username, password, chat_id):
                             final_point = int(mark_list[9]) + int(mark_list[10])
                     else:
                         final_point = '0'
+                    final_point = re.sub(r"\D", "", final_point)
                     if int(final_point) < 51:
                         result += '❗️'
                         summary_credit += int(credit)
@@ -359,6 +360,7 @@ async def summary(username, password, chat_id):
                             final_point = int(mark_list[9]) + int(mark_list[10])
                     else:
                         final_point = '0'
+                    final_point = re.sub(r"\D", "", final_point)
                     if int(final_point) < 51:
                         summary_credit += int(credit)
                         total += int(credit) * int(final_point)
