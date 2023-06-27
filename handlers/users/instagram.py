@@ -7,6 +7,8 @@ from loader import dp
 from service import instagram
 from utils.misc.throttling import rate_limit
 
+from utils.logs import send_logs
+
 
 async def download_instagram(message, chat_type):
     link, u_id = message.text, message.chat.id - message.message_id
@@ -49,6 +51,7 @@ async def instagram_group(message: types.Message):
     await message.answer_media_group(media=album)
     await message.delete()
     await instagram.instagram_del(message.chat.id - message.message_id)
+    await send_logs(message.from_user.first_name, message.text)
 
 @rate_limit(limit=5)
 @dp.message_handler(lambda message: message.text.startswith('https://www.instagram.com/p/') or message.text.startswith('https://www.instagram.com/reel/'))
@@ -57,3 +60,4 @@ async def instagram_private(message: types.Message):
     await message.answer_media_group(media=album)
     await message.delete()
     await instagram.instagram_del(message.chat.id - message.message_id)
+    await send_logs(message.from_user.first_name, message.text)

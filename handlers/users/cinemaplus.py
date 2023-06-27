@@ -8,6 +8,8 @@ from loader import dp
 from service import cinemaplus
 from utils.misc.throttling import rate_limit
 
+from utils.logs import send_logs
+
 
 @rate_limit(limit=20)
 @dp.message_handler(commands=['cinemaplus'], commands_prefix="/!@")
@@ -20,6 +22,7 @@ async def command_cinemaplus(message: types.Message):
         await temp.delete()
     except:
         await temp.edit_text('⚠️ Ошибка. Повторите еще раз.')
+    await send_logs(message.from_user.first_name, message.text)
 
 async def send_page(page_num, chat_id, message_id=None):
     if page_num == -1: page_num = len(pages) - 1
@@ -35,6 +38,7 @@ async def send_page(page_num, chat_id, message_id=None):
         await dp.bot.edit_message_caption(caption=text, chat_id=chat_id, message_id=message_id, reply_markup=cinemaplus_kb)
     else:
         await dp.bot.send_photo(chat_id=chat_id, photo=photo_bytes, caption=text, reply_markup=cinemaplus_kb)
+        
 
 @dp.callback_query_handler(lambda c: c.data.startswith('cp_back:'))
 async def back_page(callback_query: types.CallbackQuery):

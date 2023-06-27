@@ -5,6 +5,8 @@ from aiogram import types
 from loader import dp
 from service.converter import currency_converter
 
+from utils.logs import send_logs
+
 
 @dp.message_handler(lambda message: re.match(r'^\d+\s+\w{3}\s+to\s+\w{3}$', message.text) or re.match(r'^\d+\.\d+\s+\w{3}\s+to\s+\w{3}$', message.text))
 async def handler(message: types.Message):
@@ -20,3 +22,4 @@ async def handler(message: types.Message):
         await message.answer(f'{result} {to_currency}')
     except Exception as ex:
         await message.answer(f'⚠️ Error: {ex}')
+    await send_logs(message.from_user.first_name, message.text)

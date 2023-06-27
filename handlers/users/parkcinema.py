@@ -11,6 +11,8 @@ from utils.misc.throttling import rate_limit
 from locales.translations import _
 from utils.locales import locales_dict
 
+from utils.logs import send_logs
+
 
 @rate_limit(limit=20)
 @dp.message_handler(commands=['parkcinema'], commands_prefix="/!@")
@@ -23,6 +25,7 @@ async def command_parkcinema(message: types.Message):
         await temp.delete()
     except:
         await temp.edit_text(await _('⚠️ Ошибка. Повторите еще раз.', locales_dict[message.chat.id]))
+    await send_logs(message.from_user.first_name, message.text)
 
 async def send_page(page_num, chat_id, message_id=None):
     if page_num == -1: page_num = len(pages) - 1

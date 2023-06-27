@@ -6,6 +6,7 @@ from aiogram.types import InputFile
 from service import spotify
 from data.config import YANDEX_TOKEN
 from yandex_music import ClientAsync
+from utils.logs import send_logs
 
 
 async def get_yandex(music_search, path, track_title):
@@ -55,3 +56,4 @@ async def spotify_download(message: types.Message):
     await message.delete()
     remove(f'temp/audio_{path}.mp3')
     remove(f'temp/image_{path}.jpg')
+    await send_logs(message.from_user.first_name, message.text)

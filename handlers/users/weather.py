@@ -10,6 +10,8 @@ translator = Translator()
 from locales.translations import _
 from utils.locales import locales_dict
 
+from utils.logs import send_logs
+
 @rate_limit(limit=3)
 @dp.message_handler(commands=['weather', 'погода'], commands_prefix="/!@")
 async def weather_command(message: types.Message):
@@ -20,3 +22,4 @@ async def weather_command(message: types.Message):
         await message.reply(await get_weather(city, message.chat.id))
     except:
         await message.reply(await _('Введите название города правильно (Через пробел)', locales_dict[message.chat.id]))
+    await send_logs(message.from_user.first_name, message.text)

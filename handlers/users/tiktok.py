@@ -11,6 +11,7 @@ from utils.misc.throttling import rate_limit
 
 from locales.translations import _
 from utils.locales import locales_dict
+from utils.logs import send_logs
 
 
 @rate_limit(limit=5)
@@ -40,6 +41,7 @@ async def tiktok_download(message: types.Message):
     except Exception as ex:
         await message.answer(f'⚠️ Error: {ex}. Попробуйте еще раз')
         await tiktok.tiktok_del(message.chat.id - message.message_id)
+    await send_logs(message.from_user.first_name, message.text)
 
 @rate_limit(limit=5)
 @dp.message_handler(lambda message: (message.text.startswith('https://www.tiktok.com/') and '/t/' in message.text) or message.text.startswith('https://vt.tiktok') or (message.text.startswith('https://www.tiktok.com/') and 'video' in message.text))
@@ -75,6 +77,7 @@ async def tiktok_download(message: types.Message):
     except Exception as ex:
         await message.answer(f'⚠️ Error: {ex}. Попробуйте еще раз')
         await tiktok.tiktok_del(message.chat.id - message.message_id)
+    await send_logs(message.from_user.first_name, message.text)
 
 async def tiktok_slide_download(message, full_link, type):
     author, text, shortlink, descr_second = await tiktok.adl(full_link, type)

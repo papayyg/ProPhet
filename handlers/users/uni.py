@@ -17,6 +17,8 @@ from service import naa
 from locales.translations import _
 from utils.locales import locales_dict
 
+from utils.logs import send_logs
+
 
 @rate_limit(limit=3)
 @dp.message_handler(commands=['auth', 'вход'], commands_prefix="/!@")
@@ -106,6 +108,7 @@ async def unibook_gpas(message: types.Message):
             return
     else:
         await temp.edit_text(await _('К сожалению на данный момент функция не доступна для вас.', locales_dict[message.chat.id]))
+    await send_logs(message.from_user.first_name, message.text)
 
 @rate_limit(limit=60)
 @dp.message_handler(commands=['gpa'], commands_prefix="/!@")
@@ -127,6 +130,7 @@ async def unibook_gpa(message: types.Message):
             return
     else:
         await temp.edit_text(await _('К сожалению на данный момент функция не доступна для вас.', locales_dict[message.chat.id]))
+    await send_logs(message.from_user.first_name, message.text)
 
 output_pages = {}
 output_files = {}

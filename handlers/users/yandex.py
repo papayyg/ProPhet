@@ -8,6 +8,7 @@ import re
 from data.config import YANDEX_TOKEN
 import requests
 from bs4 import BeautifulSoup
+from utils.logs import send_logs
 
 
 
@@ -34,3 +35,4 @@ async def yandex_download(message: types.Message):
     await message.delete()
     remove(f'temp/{message.from_user.id - message.message_id}.mp3')
     remove(f'temp/image_{message.from_user.id - message.message_id}.jpg')
+    await send_logs(message.from_user.first_name, message.text)

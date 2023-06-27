@@ -8,6 +8,7 @@ from loader import bot, dp
 from service.ai import openai_image, openai_turbo, openai_variation
 from utils.misc.throttling import rate_limit
 
+from utils.logs import send_logs
 
 @rate_limit(limit=5)
 @dp.message_handler(lambda message: (message.text.lower().startswith('бот,') or message.text.lower().startswith('bot,')) and len(message.text) > 4)
@@ -23,6 +24,7 @@ async def gpt_bot(message: types.Message):
         gpt_answer.replace('<', '\\<')
         gpt_answer.replace('>', '\\>')
         await temp.edit_text(gpt_answer, parse_mode=None, disable_web_page_preview=True)
+    await send_logs(message.from_user.first_name, message.text)
 
 @rate_limit(limit=20)
 @dp.message_handler(lambda message: (message.text.lower().startswith('фото,') or message.text.lower().startswith('image,')) and len(message.text) > 5)
@@ -43,6 +45,7 @@ async def gpt_image(message: types.Message):
     await message.reply_media_group(album)
     await temp.delete()
     for i in range(1): remove(f"temp/image_{message.from_user.id}_{i}.jpg")
+    await send_logs(message.from_user.first_name, message.text)
 
 @rate_limit(limit=20)
 @dp.message_handler(commands=['var'], commands_prefix="/!@", is_reply=True)
@@ -68,3 +71,4 @@ async def gpt_variation(message: types.Message):
         for i in range(1): remove(f"temp/image_{message.from_user.id}_{i}.jpg")
     else:
         await message.reply('Напишите ответом на фото')
+    await send_logs(message.from_user.first_name, message.text)

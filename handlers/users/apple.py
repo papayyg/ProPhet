@@ -5,6 +5,7 @@ from utils.misc.throttling import rate_limit
 from aiogram.types import InputFile
 from service import apple
 
+from utils.logs import send_logs
 
 @rate_limit(limit=5)
 @dp.message_handler(lambda message: (message.text.startswith('https://music.apple.com/') and 'playlist' not in message.text))
@@ -27,3 +28,4 @@ async def spotify_download(message: types.Message):
         remove(f'temp/image_{path}.jpg')
     else:
         await message.answer('Ошибка. Повторите попытку')
+    await send_logs(message.from_user.first_name, message.text)

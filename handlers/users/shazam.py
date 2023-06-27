@@ -10,6 +10,7 @@ from data.config import YANDEX_TOKEN, CLIENT_ID, CLIENT_SECRET
 import httpx
 import asyncio
 from service import spotify
+from utils.logs import send_logs
 
 
 async def get_spotify_link(title, author):
@@ -102,3 +103,4 @@ async def shazam_command(message: types.Message):
             remove(f"temp/image_{message.from_user.id-message.message_id}.jpg")
     else:
         await temp.edit_text('Введите ответом на аудио/видео/голосовое сообщение/видеосообщение')
+    await send_logs(message.from_user.first_name, message.text)

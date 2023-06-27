@@ -13,6 +13,8 @@ import re
 from service import youtube
 from keyboards import inline_kp_youtube
 
+from utils.logs import send_logs
+
 
 headers = {
     'Accept': 'application/json',
@@ -56,6 +58,7 @@ async def videos_group(message: types.Message):
     except Exception as ex:
         print(ex)
         await message.answer('Ошибка. Повторите попытку (Возможно видео недоступно).')
+    await send_logs(message.from_user.first_name, message.text)
 
 
 @rate_limit(limit=5)
@@ -76,3 +79,4 @@ async def videos_private(message: types.Message):
     except Exception as ex:
         print(ex)
         await message.answer('Ошибка. Повторите попытку (Возможно видео недоступно).')
+    await send_logs(message.from_user.first_name, message.text)
